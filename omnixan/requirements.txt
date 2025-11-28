@@ -22,12 +22,11 @@ pennylane>=0.33.0
 qutip>=4.7.0
 projectq>=0.8.0
 strawberryfields>=0.23.0
-quantum-inspire>=4.1.0
 
 # Quantum Machine Learning
 pennylane-qiskit>=0.33.0
 pennylane-cirq>=0.33.0
-tensorflow-quantum>=0.7.0
+tensorflow-quantum>=0.7.3
 
 # GPU Acceleration (opcional - descomenta según necesidad)
  cupy-cuda12x>=12.0.0
