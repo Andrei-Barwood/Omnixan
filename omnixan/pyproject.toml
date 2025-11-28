@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "omnixan"
+version = "0.1.0"
+description = "Shima System Technologies Implementation on Earth - With Quantum Computing"
+readme = "README.md"
+requires-python = ">=3.13"
+license = {text = "MIT"}
+authors = [
+    {name = "Kirtan Teg Singh"}
+]
+keywords = ["EVE", "cloud-computing", "distributed-systems", "AI", "GPU", "quantum-computing"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+[project.urls]
+Homepage = "https://github.com/Andrei-Barwood/Omnixan"
+Documentation = "All sources are welcome"
+Repository = "https://github.com/Andrei-Barwood/omnixan"
+Issues = "https://github.com/Andrei-Barwood/omnixan/issues"
+
+[tool.setuptools]
+packages = ["omnixan"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+addopts = "--cov=omnixan --cov-report=html"
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+line_length = 100
