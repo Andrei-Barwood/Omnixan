@@ -1,5 +1,15 @@
 #!/bin/zsh
 
+# OPEN SOURCE EDITION:
+# this open source editions means that i cannot divinate
+# which libraries you wanna use, but, what if you already
+# know some and you want to use them instead of the ones 
+# you wanted, horrendous, so i didn't do it for that reason
+# if you rather see a more commercial approach, 
+# with a versioned fashion you can use the other one,
+# this is sort of the laboratory for experiments
+# the other one is called '03_omnixan-setup-quantum.sh'
+
 # ============================================================================
 #  🌌 OMNIXAN Project Setup Script - Full Edition
 #  Genera estructura completa con READMEs hermosos y funcionales
