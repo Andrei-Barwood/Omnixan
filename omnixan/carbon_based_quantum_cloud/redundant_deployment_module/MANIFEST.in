@@ -1,0 +1,8 @@
+include README.md
+include LICENSE
+include CHANGELOG.md
+include py.typed
+include config.example.yaml
+recursive-include tests *.py
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
