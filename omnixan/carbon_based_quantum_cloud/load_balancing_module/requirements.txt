@@ -1,0 +1,18 @@
+# Core dependencies
+pydantic>=2.0.0,<3.0.0
+pydantic-core>=2.10.0
+
+# Async support
+aiohttp>=3.9.0
+
+# Testing (optional, dev dependencies)
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+
+# Type checking (optional, dev dependencies)
+mypy>=1.5.0
+
+# Linting (optional, dev dependencies)
+ruff>=0.1.0
+black>=23.0.0

@@ -1,0 +1,48 @@
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    OMNIXAN LOAD BALANCING - QUICK REFERENCE                  ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+INSTALLATION:
+  pip install -e .                    # Development mode
+  pip install -e ".[dev]"             # With dev dependencies
+
+BASIC USAGE:
+  from load_balancing_module import LoadBalancingModule, BackendConfig
+
+  lb = LoadBalancingModule()
+  await lb.initialize()
+  backend_id = await lb.add_backend(BackendConfig(host="...", port=8080))
+  result = await lb.route_request(Request(client_ip="..."))
+  await lb.shutdown()
+
+CLI USAGE:
+  python -m load_balancing_module --config config.yaml --log-level INFO
+  python -m load_balancing_module --algorithm quantum_aware
+
+TESTING:
+  pytest test_load_balancing_module.py -v
+  pytest test_load_balancing_module.py --cov=load_balancing_module
+
+ALGORITHMS:
+  • round_robin        - Even distribution
+  • least_connections  - Route to least busy
+  • weighted          - Based on weights
+  • quantum_aware     - Quantum-optimized
+  • ip_hash           - Session affinity
+  • least_latency     - Route to fastest
+
+CONVENIENCE FUNCTIONS:
+  create_quantum_aware_module()      # Quantum-optimized
+  create_high_availability_module()  # HA-optimized
+
+KEY METHODS:
+  initialize()                       # Start module
+  add_backend(config)               # Add backend
+  route_request(request)            # Route request
+  get_load_distribution()           # Get metrics
+  health_check(backend_id)          # Check health
+  configure_algorithm(algorithm)     # Change algorithm
+  shutdown()                        # Stop module
+
+╚══════════════════════════════════════════════════════════════════════════════╝

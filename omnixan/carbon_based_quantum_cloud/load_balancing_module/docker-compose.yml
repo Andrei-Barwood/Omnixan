@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  load_balancer:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ALGORITHM=quantum_aware
+      - HEALTH_CHECK_INTERVAL=5
+      - RATE_LIMIT_RPS=1000
+      - SESSION_AFFINITY=true
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+    networks:
+      - omnixan_network
+
+  backend1:
+    image: omnixan/quantum-backend:latest
+    environment:
+      - QUANTUM_CAPABLE=true
+      - PRIORITY=10
+    networks:
+      - omnixan_network
+
+  backend2:
+    image: omnixan/quantum-backend:latest
+    environment:
+      - QUANTUM_CAPABLE=true
+      - PRIORITY=8
+    networks:
+      - omnixan_network
+
+  backend3:
+    image: omnixan/classic-backend:latest
+    environment:
+      - QUANTUM_CAPABLE=false
+      - PRIORITY=5
+    networks:
+      - omnixan_network
+
+networks:
+  omnixan_network:
+    driver: bridge

@@ -1,0 +1,9 @@
+include README.md
+include LICENSE
+include requirements.txt
+include config.example.yaml
+include docker-compose.yml
+recursive-include load_balancing_module *.py
+recursive-include load_balancing_module py.typed
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
