@@ -5,6 +5,9 @@ Description: Production-ready CUDA acceleration with multi-GPU support,
              stream processing, and tensor core integration
 """
 
+from __future__ import annotations
+
+import importlib
 import logging
 from typing import Dict, List, Optional, Tuple, Union, Any
 from dataclasses import dataclass, field
@@ -13,24 +16,102 @@ import threading
 from contextlib import contextmanager
 import numpy as np
 
-try:
-    import cupy as cp
-    import cupyx
-    from cupyx.profiler import benchmark
-    CUPY_AVAILABLE = True
-except ImportError:
-    CUPY_AVAILABLE = False
-    cp = None
+cp = None
+cuda = None
+SourceModule = None
+gpuarray = None
 
-try:
-    import pycuda.driver as cuda
-    import pycuda.autoinit
-    from pycuda.compiler import SourceModule
-    import pycuda.gpuarray as gpuarray
-    PYCUDA_AVAILABLE = True
-except ImportError:
-    PYCUDA_AVAILABLE = False
-    cuda = None
+CUPY_AVAILABLE = False
+PYCUDA_AVAILABLE = False
+_CUPY_IMPORT_ERROR: Exception | None = None
+_PYCUDA_IMPORT_ERROR: Exception | None = None
+
+
+def _load_cupy() -> bool:
+    """Lazily import CuPy only when a GPU backend is actually requested."""
+    global cp, CUPY_AVAILABLE, _CUPY_IMPORT_ERROR
+
+    if cp is not None:
+        return True
+    if _CUPY_IMPORT_ERROR is not None:
+        return False
+
+    try:
+        cp = importlib.import_module("cupy")
+        CUPY_AVAILABLE = True
+    except Exception as exc:
+        _CUPY_IMPORT_ERROR = exc
+        CUPY_AVAILABLE = False
+
+    return CUPY_AVAILABLE
+
+
+def _load_pycuda() -> bool:
+    """Lazily import PyCUDA only when a GPU backend is actually requested."""
+    global cuda, SourceModule, gpuarray, PYCUDA_AVAILABLE, _PYCUDA_IMPORT_ERROR
+
+    if cuda is not None and SourceModule is not None and gpuarray is not None:
+        return True
+    if _PYCUDA_IMPORT_ERROR is not None:
+        return False
+
+    try:
+        cuda = importlib.import_module("pycuda.driver")
+        SourceModule = importlib.import_module("pycuda.compiler").SourceModule
+        gpuarray = importlib.import_module("pycuda.gpuarray")
+        PYCUDA_AVAILABLE = True
+    except Exception as exc:
+        _PYCUDA_IMPORT_ERROR = exc
+        PYCUDA_AVAILABLE = False
+
+    return PYCUDA_AVAILABLE
+
+
+def get_optional_backend_status() -> Dict[str, Dict[str, Any]]:
+    """Report lazy GPU backend availability without failing package import."""
+    cupy_available = _load_cupy()
+    pycuda_available = _load_pycuda()
+
+    return {
+        "cupy": {
+            "available": cupy_available,
+            "error": None if cupy_available else str(_CUPY_IMPORT_ERROR),
+        },
+        "pycuda": {
+            "available": pycuda_available,
+            "error": None if pycuda_available else str(_PYCUDA_IMPORT_ERROR),
+        },
+    }
+
+
+def _missing_backend_message(requested: Optional["GPUBackend"] = None) -> str:
+    """Build a clear runtime error for unavailable optional GPU backends."""
+    status = get_optional_backend_status()
+    detail_chunks = [
+        f"{name}: {data['error']}"
+        for name, data in status.items()
+        if data["error"]
+    ]
+    details = f" Details: {'; '.join(detail_chunks)}." if detail_chunks else ""
+
+    if requested == GPUBackend.CUPY:
+        return (
+            "CuPy support is optional and is not available. "
+            "Install `cupy` before using GPUBackend.CUPY."
+            f"{details}"
+        )
+    if requested == GPUBackend.PYCUDA:
+        return (
+            "PyCUDA support is optional and is not available. "
+            "Install `pycuda` before using GPUBackend.PYCUDA."
+            f"{details}"
+        )
+
+    return (
+        "GPU backends are optional and none are available. "
+        "Install `cupy` or `pycuda` before instantiating CUDAAccelerationModule."
+        f"{details}"
+    )
 
 
 class GPUBackend(Enum):
@@ -147,19 +228,16 @@ class CUDAAccelerationModule:
     def _select_backend(self, backend: GPUBackend) -> GPUBackend:
         """Select appropriate GPU backend."""
         if backend == GPUBackend.AUTO:
-            if CUPY_AVAILABLE:
+            if _load_cupy():
                 return GPUBackend.CUPY
-            elif PYCUDA_AVAILABLE:
+            elif _load_pycuda():
                 return GPUBackend.PYCUDA
             else:
-                raise RuntimeError(
-                    "No compatible GPU backend found. "
-                    "Please install CuPy or PyCUDA."
-                )
-        elif backend == GPUBackend.CUPY and not CUPY_AVAILABLE:
-            raise RuntimeError("CuPy not available. Please install cupy.")
-        elif backend == GPUBackend.PYCUDA and not PYCUDA_AVAILABLE:
-            raise RuntimeError("PyCUDA not available. Please install pycuda.")
+                raise RuntimeError(_missing_backend_message())
+        elif backend == GPUBackend.CUPY and not _load_cupy():
+            raise RuntimeError(_missing_backend_message(GPUBackend.CUPY))
+        elif backend == GPUBackend.PYCUDA and not _load_pycuda():
+            raise RuntimeError(_missing_backend_message(GPUBackend.PYCUDA))
 
         return backend
 

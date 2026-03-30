@@ -48,6 +48,34 @@ OPTIONAL_DEPENDENCIES: dict[str, dict[str, str]] = {
         "purpose": "Distributed scheduler and workers",
         "probe": "import",
     },
+    "cupy": {
+        "purpose": "CUDA array backend",
+        "probe": "spec",
+    },
+    "pycuda": {
+        "purpose": "CUDA driver backend",
+        "probe": "spec",
+    },
+    "tensorflow": {
+        "purpose": "TensorFlow runtime",
+        "probe": "spec",
+    },
+    "torch": {
+        "purpose": "PyTorch runtime",
+        "probe": "spec",
+    },
+    "tflite_runtime": {
+        "purpose": "TensorFlow Lite runtime",
+        "probe": "spec",
+    },
+    "tensorrt": {
+        "purpose": "TensorRT runtime",
+        "probe": "spec",
+    },
+    "openvino": {
+        "purpose": "OpenVINO runtime",
+        "probe": "spec",
+    },
     "qiskit": {
         "purpose": "Quantum backends",
         "probe": "spec",
@@ -74,6 +102,8 @@ MODULE_CHECKS: dict[str, str] = {
     "package": "omnixan",
     "load_balancing": "omnixan.carbon_based_quantum_cloud.load_balancing_module",
     "redundant_deployment": "omnixan.carbon_based_quantum_cloud.redundant_deployment_module",
+    "cuda_acceleration": "omnixan.supercomputing_interconnect_cloud.cuda_acceleration_module.module",
+    "edge_ai": "omnixan.in_memory_computing_cloud.edge_ai_module.module",
     "fog_computing": "omnixan.in_memory_computing_cloud.fog_computing_module.module",
     "cache_coherence": "omnixan.edge_computing_network.cache_coherence_module.module",
     "non_blocking": "omnixan.heterogenous_computing_group.non_blocking_module.module",

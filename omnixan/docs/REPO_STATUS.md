@@ -18,6 +18,7 @@
 - Se consolidó una CLI oficial mínima con `omnixan`, `omnixan-doctor`, `omnixan-load-balancing` y `omnixan-redundant-deployment`.
 - Los `main()` incrustados dentro de muchos `module.py` quedaron tratados como demos locales, no como comandos oficiales.
 - Se añadió una smoke suite core para cubrir import, inicialización y una operación simple en los seis bloques principales no cuánticos.
+- Se auditó el manejo de backends pesados para que CUDA y formatos Edge AI opcionales fallen con mensajes claros en runtime y no al importar módulos.
 
 ## Validación distribuida profunda ejecutada
 

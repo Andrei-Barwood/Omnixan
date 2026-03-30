@@ -69,6 +69,7 @@ PYENV_VERSION=hokkaido python -m omnixan load-balancing --version
 - La smoke suite cuántica se salta automáticamente cuando `qiskit` y `qiskit-aer` no están instalados.
 - La smoke suite distribuida se salta automáticamente cuando faltan `ray` o `dask[distributed]`.
 - La smoke suite core cubre un módulo crítico por bloque principal sin depender de stacks opcionales pesados.
+- Los módulos con CUDA, GPU o runtimes pesados ahora deben fallar al usar el backend ausente, no al importar el paquete.
 - En esta revisión, la validación módulo por módulo del stack cuántico se ejecutó sobre Python 3.10.
 
 ## Packaging

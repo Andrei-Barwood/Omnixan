@@ -108,8 +108,14 @@ def test_doctor_json_report_contains_expected_checks() -> None:
     report = json.loads(result.stdout)
 
     assert report["package"]["version"] == "0.2.0"
+    assert "cupy" in report["dependencies"]
+    assert "pycuda" in report["dependencies"]
+    assert "tensorflow" in report["dependencies"]
+    assert "torch" in report["dependencies"]
     assert report["module_imports"]["load_balancing"]["status"] == "ok"
     assert report["module_imports"]["redundant_deployment"]["status"] == "ok"
+    assert report["module_imports"]["cuda_acceleration"]["status"] == "ok"
+    assert report["module_imports"]["edge_ai"]["status"] == "ok"
     assert report["module_imports"]["fog_computing"]["status"] == "ok"
     assert report["module_imports"]["cache_coherence"]["status"] == "ok"
     assert report["module_imports"]["non_blocking"]["status"] == "ok"

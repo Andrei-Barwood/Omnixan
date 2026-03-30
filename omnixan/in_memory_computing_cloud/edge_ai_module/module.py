@@ -7,6 +7,7 @@ hardware acceleration, and efficient deployment at the edge.
 """
 
 import asyncio
+import importlib.util
 import logging
 import time
 from abc import ABC, abstractmethod
@@ -59,6 +60,71 @@ class QuantizationType(str, Enum):
     FP16 = "fp16"
     INT4 = "int4"
     DYNAMIC = "dynamic"
+
+
+OPTIONAL_EDGE_AI_RUNTIMES: Dict[str, Tuple[str, ...]] = {
+    "tensorflow": ("tensorflow",),
+    "torch": ("torch",),
+    "tflite": ("tflite_runtime", "tensorflow"),
+    "tensorrt": ("tensorrt",),
+    "openvino": ("openvino",),
+    "gpu": ("cupy", "torch", "tensorflow"),
+}
+
+
+def _runtime_available(*module_names: str) -> bool:
+    """Check whether any runtime from a requirement set is installed."""
+    return any(importlib.util.find_spec(name) is not None for name in module_names)
+
+
+MODEL_RUNTIME_REQUIREMENTS: Dict[ModelFormat, Dict[str, Any]] = {
+    ModelFormat.TENSORFLOW: {
+        "modules": OPTIONAL_EDGE_AI_RUNTIMES["tensorflow"],
+        "message": (
+            "TensorFlow model support is optional. Install `tensorflow` "
+            "before deploying ModelFormat.TENSORFLOW models."
+        ),
+    },
+    ModelFormat.PYTORCH: {
+        "modules": OPTIONAL_EDGE_AI_RUNTIMES["torch"],
+        "message": (
+            "PyTorch model support is optional. Install `torch` "
+            "before deploying ModelFormat.PYTORCH models."
+        ),
+    },
+    ModelFormat.TFLITE: {
+        "modules": OPTIONAL_EDGE_AI_RUNTIMES["tflite"],
+        "message": (
+            "TFLite model support is optional. Install `tflite-runtime` "
+            "or `tensorflow` before deploying ModelFormat.TFLITE models."
+        ),
+    },
+    ModelFormat.TENSORRT: {
+        "modules": OPTIONAL_EDGE_AI_RUNTIMES["tensorrt"],
+        "message": (
+            "TensorRT model support is optional. Install `tensorrt` "
+            "before deploying ModelFormat.TENSORRT models."
+        ),
+    },
+    ModelFormat.OPENVINO: {
+        "modules": OPTIONAL_EDGE_AI_RUNTIMES["openvino"],
+        "message": (
+            "OpenVINO model support is optional. Install `openvino` "
+            "before deploying ModelFormat.OPENVINO models."
+        ),
+    },
+}
+
+
+ACCELERATOR_RUNTIME_REQUIREMENTS: Dict[AcceleratorType, Dict[str, Any]] = {
+    AcceleratorType.GPU: {
+        "modules": OPTIONAL_EDGE_AI_RUNTIMES["gpu"],
+        "message": (
+            "GPU acceleration is optional. Install one of `cupy`, `torch`, "
+            "or `tensorflow`, or switch to AcceleratorType.CPU."
+        ),
+    },
+}
 
 
 @dataclass
@@ -357,6 +423,7 @@ class EdgeAIModule:
             return
         
         try:
+            self._validate_accelerator_support()
             self._logger.info("Initializing EdgeAIModule...")
             
             # Start batch processor
@@ -367,6 +434,8 @@ class EdgeAIModule:
             self._initialized = True
             self._logger.info("EdgeAIModule initialized successfully")
         
+        except EdgeAIError:
+            raise
         except Exception as e:
             self._logger.error(f"Initialization failed: {str(e)}")
             raise EdgeAIError(f"Failed to initialize module: {str(e)}")
@@ -462,9 +531,33 @@ class EdgeAIModule:
         
         elif operation == "get_metrics":
             return self.get_metrics()
+
+        elif operation == "get_runtime_status":
+            return self.get_runtime_status()
         
         else:
             raise ValueError(f"Unknown operation: {operation}")
+
+    def get_runtime_status(self) -> Dict[str, bool]:
+        """Expose optional runtime availability without importing frameworks."""
+        return {
+            name: _runtime_available(*modules)
+            for name, modules in OPTIONAL_EDGE_AI_RUNTIMES.items()
+        }
+
+    def _validate_accelerator_support(self) -> None:
+        """Fail clearly when an optional accelerator was requested without its runtime."""
+        requirement = ACCELERATOR_RUNTIME_REQUIREMENTS.get(
+            self.config.default_accelerator
+        )
+        if requirement and not _runtime_available(*requirement["modules"]):
+            raise EdgeAIError(requirement["message"])
+
+    def _validate_model_format_support(self, format: ModelFormat) -> None:
+        """Fail clearly when an optional model runtime is missing."""
+        requirement = MODEL_RUNTIME_REQUIREMENTS.get(format)
+        if requirement and not _runtime_available(*requirement["modules"]):
+            raise EdgeAIError(requirement["message"])
     
     async def deploy_model(
         self,
@@ -480,6 +573,7 @@ class EdgeAIModule:
         async with self._lock:
             if len(self.models) >= self.config.max_models:
                 raise EdgeAIError("Maximum model limit reached")
+            self._validate_model_format_support(format)
             
             model_id = str(uuid4())
             
@@ -818,4 +912,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
