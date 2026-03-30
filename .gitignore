@@ -8,6 +8,8 @@ virtualenv/
 .virtualenv/
 pyenv/
 .python-version
+omnixan/venv/
+omnixan/.venv/
 
 # Python
 __pycache__/
@@ -109,4 +111,3 @@ temp/
 *.cubin
 *.fatbin
 *.ptx
-
