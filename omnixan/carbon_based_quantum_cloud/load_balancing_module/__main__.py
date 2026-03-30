@@ -2,12 +2,13 @@
 Command-line interface for OMNIXAN Load Balancing Module
 """
 
-import asyncio
 import argparse
+import asyncio
+import json
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 try:
     import yaml
@@ -21,6 +22,9 @@ try:
         LoadBalancingAlgorithm,
         LoadBalancingAlgorithmType,
         BackendConfig,
+        HealthCheckConfig,
+        Request,
+        WorkloadType,
         get_version,
     )
 except ImportError:
@@ -30,6 +34,9 @@ except ImportError:
         LoadBalancingAlgorithm,
         LoadBalancingAlgorithmType,
         BackendConfig,
+        HealthCheckConfig,
+        Request,
+        WorkloadType,
         get_version,
     )
 
@@ -40,9 +47,19 @@ def setup_logging(level: str = "INFO") -> None:
         level=getattr(logging, level.upper()),
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
-            logging.StreamHandler(sys.stdout)
+            logging.StreamHandler(sys.stderr)
         ]
     )
+
+
+def _render_payload(payload: dict[str, Any], as_json: bool) -> None:
+    """Render CLI output in a stable format."""
+    if as_json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return
+
+    for key, value in payload.items():
+        print(f"{key}: {value}")
 
 
 def load_config(config_path: Optional[Path]) -> LoadBalancingModuleConfig:
@@ -114,9 +131,53 @@ async def run_server(config: LoadBalancingModuleConfig, config_file: Optional[Pa
         logger.info("Shutdown complete")
 
 
-def main() -> None:
+async def run_smoke(
+    algorithm_type: LoadBalancingAlgorithmType,
+) -> dict[str, Any]:
+    """Run a short, deterministic smoke check and exit."""
+    config = LoadBalancingModuleConfig(
+        algorithm=LoadBalancingAlgorithm(algorithm_type=algorithm_type),
+        health_check=HealthCheckConfig(healthy_threshold=1),
+        session_affinity=True,
+        metrics_enabled=True,
+    )
+    lb_module = LoadBalancingModule(config)
+    await lb_module.initialize()
+
+    try:
+        for index in range(2):
+            backend = BackendConfig(
+                host=f"smoke-backend-{index + 1}.omnixan.local",
+                port=8080 + index,
+                weight=1.0 + index,
+                quantum_capable=index == 0,
+                priority=10 - index,
+            )
+            await lb_module.add_backend(backend)
+
+        result = await lb_module.route_request(
+            Request(
+                client_ip="127.0.0.1",
+                workload_type=WorkloadType.QUANTUM_SIMULATION,
+                session_id="omnixan-cli-smoke",
+            )
+        )
+        distribution = await lb_module.get_load_distribution()
+        return {
+            "algorithm": distribution.algorithm.value,
+            "backends": len(distribution.backends),
+            "routed_backend": result.backend_id,
+            "total_requests": distribution.total_requests,
+            "version": get_version(),
+        }
+    finally:
+        await lb_module.shutdown()
+
+
+def main(argv: list[str] | None = None) -> int:
     """Main entry point"""
     parser = argparse.ArgumentParser(
+        prog="omnixan-load-balancing",
         description="OMNIXAN Load Balancing Module",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -147,28 +208,49 @@ def main() -> None:
         default="round_robin",
         help="Load balancing algorithm (default: round_robin)"
     )
+    parser.add_argument(
+        "--smoke",
+        action="store_true",
+        help="Run a short self-check and exit",
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit smoke output as JSON when using --smoke",
+    )
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Setup logging
     setup_logging(args.log_level)
 
-    # Load or create configuration
-    if args.config:
-        config = load_config(args.config)
-    else:
-        config = LoadBalancingModuleConfig(
-            algorithm=LoadBalancingAlgorithm(
-                algorithm_type=LoadBalancingAlgorithmType(args.algorithm)
-            )
+    if args.smoke:
+        result = asyncio.run(
+            run_smoke(LoadBalancingAlgorithmType(args.algorithm))
         )
+        _render_payload(result, as_json=args.json)
+        return 0
+
+    # Load or create configuration
+    try:
+        if args.config:
+            config = load_config(args.config)
+        else:
+            config = LoadBalancingModuleConfig(
+                algorithm=LoadBalancingAlgorithm(
+                    algorithm_type=LoadBalancingAlgorithmType(args.algorithm)
+                )
+            )
+    except Exception as exc:
+        parser.exit(status=2, message=f"error: {exc}\n")
 
     # Run server
     try:
         asyncio.run(run_server(config, args.config))
+        return 0
     except KeyboardInterrupt:
-        pass
+        return 130
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

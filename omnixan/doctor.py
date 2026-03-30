@@ -2,7 +2,9 @@
 Workspace diagnostics for the OMNIXAN repo.
 
 Run with:
+    python -m omnixan doctor
     python -m omnixan.doctor
+    omnixan-doctor
     python -m omnixan.doctor --json
 """
 
@@ -197,7 +199,10 @@ def _render_text(report: dict[str, Any]) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     """CLI entrypoint for repo diagnostics."""
-    parser = argparse.ArgumentParser(description="Run OMNIXAN workspace diagnostics")
+    parser = argparse.ArgumentParser(
+        prog="omnixan-doctor",
+        description="Run OMNIXAN workspace diagnostics",
+    )
     parser.add_argument(
         "--json",
         action="store_true",

@@ -15,6 +15,8 @@
 - Se corrigió el extra distribuido para instalar `dask[distributed]` junto con `ray`.
 - Se amplió `omnixan.doctor` con chequeos de `ray`, `ray.data`, `dask.array`, `dask.distributed` y módulos distribuidos clave.
 - Se añadió una smoke suite opcional para runtime distribuido y módulos de fog, coherencia de caché y mitigación de fallos.
+- Se consolidó una CLI oficial mínima con `omnixan`, `omnixan-doctor`, `omnixan-load-balancing` y `omnixan-redundant-deployment`.
+- Los `main()` incrustados dentro de muchos `module.py` quedaron tratados como demos locales, no como comandos oficiales.
 
 ## Validación distribuida profunda ejecutada
 

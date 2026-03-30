@@ -11,7 +11,7 @@
 Diagnóstico rápido del workspace:
 
 ```bash
-PYENV_VERSION=hokkaido python -m omnixan.doctor
+PYENV_VERSION=hokkaido python -m omnixan doctor
 ```
 
 Pruebas mínimas del repo:
@@ -35,14 +35,14 @@ python -m pip install -e '.[distributed,dev]'
 Validación cuántica profunda:
 
 ```bash
-python -m omnixan.doctor --json
+python -m omnixan doctor --json
 python -m pytest omnixan/tests -k quantum_stack_smoke
 ```
 
 Validación distribuida profunda:
 
 ```bash
-python -m omnixan.doctor --json
+python -m omnixan doctor --json
 python -m pytest omnixan/tests -k distributed_stack_smoke
 python -m pip check
 ```
@@ -50,7 +50,7 @@ python -m pip check
 Verificación del entrypoint de balanceo:
 
 ```bash
-PYENV_VERSION=hokkaido python -m omnixan.carbon_based_quantum_cloud.load_balancing_module --version
+PYENV_VERSION=hokkaido python -m omnixan load-balancing --version
 ```
 
 ## Notas del repo
@@ -68,3 +68,9 @@ PYENV_VERSION=hokkaido python -m omnixan.carbon_based_quantum_cloud.load_balanci
 
 - Fuente de verdad: [`/pyproject.toml`](/Users/kirtantegsingh/Public/omnixan/Omnixan/pyproject.toml)
 - Referencia operativa: [`PACKAGING.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/PACKAGING.md)
+
+## CLI y Entry Points
+
+- La CLI oficial está documentada en [`CLI.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/CLI.md).
+- `python -m omnixan` es ahora el entrypoint raíz recomendado para comandos soportados.
+- Los `main()` dentro de `module.py` siguen existiendo en varios bloques, pero se consideran demos o smoke helpers internos y no comandos estables.

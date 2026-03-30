@@ -21,6 +21,9 @@ def test_root_pyproject_exists_and_is_parseable() -> None:
 
     assert data["project"]["name"] == "omnixan"
     assert data["project"]["version"] == "0.2.0"
+    assert "omnixan" in data["project"]["scripts"]
+    assert "omnixan-load-balancing" in data["project"]["scripts"]
+    assert "omnixan-redundant-deployment" in data["project"]["scripts"]
     assert "cloud" in data["project"]["optional-dependencies"]
     assert any(
         dep.startswith("dask[distributed]")

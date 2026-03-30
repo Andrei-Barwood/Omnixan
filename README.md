@@ -38,7 +38,7 @@ omnixan/
 ## Verificación rápida
 
 ```bash
-PYENV_VERSION=hokkaido python -m omnixan.doctor
+PYENV_VERSION=hokkaido python -m omnixan doctor
 PYENV_VERSION=hokkaido python -m pytest omnixan/tests
 ```
 
@@ -54,7 +54,7 @@ Smoke suite distribuida opcional:
 ```bash
 python -m pip install -e '.[distributed,dev]'
 python -m pytest omnixan/tests -k distributed_stack_smoke
-python -m omnixan.doctor --json
+python -m omnixan doctor --json
 ```
 
 ## Instalación
@@ -78,13 +78,23 @@ Para una validación cuántica profunda en un solo entorno:
 
 ```bash
 python -m pip install -e '.[quantum,dev]'
-python -m omnixan.doctor --json
+python -m omnixan doctor --json
 python -m pytest omnixan/tests
+```
+
+## CLI oficial
+
+```bash
+python -m omnixan --help
+python -m omnixan doctor --json
+python -m omnixan load-balancing --smoke --json
+python -m omnixan redundant-deployment --smoke --json
 ```
 
 ## Documentación
 
 - Arquitectura: [`omnixan/docs/ARCHITECTURE.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/ARCHITECTURE.md)
+- CLI oficial: [`omnixan/docs/CLI.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/CLI.md)
 - Desarrollo y validación: [`omnixan/docs/DEVELOPMENT.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/DEVELOPMENT.md)
 - Packaging: [`omnixan/docs/PACKAGING.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/PACKAGING.md)
 - Estado del repo: [`omnixan/docs/REPO_STATUS.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/REPO_STATUS.md)

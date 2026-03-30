@@ -75,7 +75,10 @@ docs = [
 ]
 
 [project.scripts]
+omnixan = "omnixan.cli:main"
 omnixan-doctor = "omnixan.doctor:main"
+omnixan-load-balancing = "omnixan.carbon_based_quantum_cloud.load_balancing_module.__main__:main"
+omnixan-redundant-deployment = "omnixan.carbon_based_quantum_cloud.redundant_deployment_module.__main__:main"
 
 [tool.setuptools.packages.find]
 include = ["omnixan*"]
