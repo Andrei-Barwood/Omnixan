@@ -4,6 +4,8 @@ Part of the quantum_cloud_architecture block
 Provides a unified interface for quantum algorithm execution across multiple backends
 """
 
+from __future__ import annotations
+
 import asyncio
 import time
 from abc import ABC, abstractmethod

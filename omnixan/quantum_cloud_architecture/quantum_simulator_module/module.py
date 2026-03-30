@@ -7,6 +7,8 @@ Production-ready unified quantum simulator interface supporting multiple backend
 density matrix, stabilizer, etc.)
 """
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import time
@@ -758,4 +760,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

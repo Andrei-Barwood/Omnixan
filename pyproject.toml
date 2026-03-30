@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools>=69.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "omnixan"
+version = "0.2.0"
+description = "Modular workspace for cloud, edge, supercomputing and quantum computing experiments."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Kirtan Teg Singh" }
+]
+keywords = [
+    "cloud-computing",
+    "distributed-systems",
+    "quantum-computing",
+    "edge-computing",
+    "supercomputing",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "numpy>=1.26.0",
+    "pydantic>=2.5.0",
+]
+
+[project.optional-dependencies]
+data = [
+    "pandas>=2.1.0",
+    "scipy>=1.11.0",
+    "scikit-learn>=1.3.0",
+]
+distributed = [
+    "dask>=2023.11.0",
+    "ray>=2.8.0",
+]
+quantum = [
+    "cirq>=1.4.0",
+    "pennylane>=0.33.0",
+    "qiskit>=1.0.0",
+    "qiskit-aer>=0.13.0",
+]
+dev = [
+    "pytest>=7.4.0",
+]
+docs = [
+    "sphinx>=7.2.0",
+    "sphinx-rtd-theme>=2.0.0",
+]
+
+[project.scripts]
+omnixan-doctor = "omnixan.doctor:main"
+
+[tool.setuptools.packages.find]
+include = ["omnixan*"]
+exclude = [
+    "omnixan.venv*",
+    "omnixan.data*",
+    "omnixan.docs*",
+    "omnixan.logs*",
+    "omnixan.tests*",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["omnixan/tests"]
+python_files = ["test_*.py"]
+addopts = "-q"

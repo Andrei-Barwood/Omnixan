@@ -10,6 +10,8 @@ Production-ready quantum machine learning implementation supporting:
 - Hybrid quantum-classical optimization
 """
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import time
@@ -972,4 +974,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

@@ -7,6 +7,8 @@ error correction codes (Bit-flip, Phase-flip, Shor, Steane, Surface codes)
 with syndrome detection, error correction, and fidelity estimation.
 """
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import time
@@ -1111,4 +1113,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

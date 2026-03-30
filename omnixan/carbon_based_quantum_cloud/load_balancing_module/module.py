@@ -10,7 +10,7 @@ from __future__ import annotations
 import asyncio
 import time
 import logging
-from typing import Any, Dict, List, Optional, Set, Literal
+from typing import Any, Dict, List, Optional, Set, Literal, TypeAlias
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
@@ -23,9 +23,7 @@ from pydantic.types import PositiveInt, PositiveFloat, NonNegativeFloat
 
 # ==================== Type Definitions ====================
 
-class BackendID(str):
-    """Type alias for backend identifier"""
-    pass
+BackendID: TypeAlias = str
 
 
 class LoadBalancingAlgorithmType(str, Enum):

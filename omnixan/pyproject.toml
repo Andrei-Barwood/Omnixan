@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "omnixan"
-version = "0.1.0"
+version = "0.2.0"
 description = "Shima System Technologies Implementation on Earth - With Quantum Computing"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
     {name = "Kirtan Teg Singh"}
@@ -34,7 +34,7 @@ packages = ["omnixan"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"
-addopts = "--cov=omnixan --cov-report=html"
+addopts = "-q"
 
 [tool.black]
 line-length = 100

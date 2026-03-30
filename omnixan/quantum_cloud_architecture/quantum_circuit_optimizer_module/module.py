@@ -7,6 +7,8 @@ techniques: gate fusion, gate cancellation, decomposition, layout optimization,
 and routing for improved circuit depth and gate count.
 """
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import time
@@ -750,4 +752,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

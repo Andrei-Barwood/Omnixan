@@ -14,14 +14,24 @@ try:
 except ImportError:
     yaml = None
 
-from load_balancing_module import (
-    LoadBalancingModule,
-    LoadBalancingModuleConfig,
-    LoadBalancingAlgorithm,
-    LoadBalancingAlgorithmType,
-    BackendConfig,
-    get_version,
-)
+try:
+    from . import (
+        LoadBalancingModule,
+        LoadBalancingModuleConfig,
+        LoadBalancingAlgorithm,
+        LoadBalancingAlgorithmType,
+        BackendConfig,
+        get_version,
+    )
+except ImportError:
+    from omnixan.carbon_based_quantum_cloud.load_balancing_module import (
+        LoadBalancingModule,
+        LoadBalancingModuleConfig,
+        LoadBalancingAlgorithm,
+        LoadBalancingAlgorithmType,
+        BackendConfig,
+        get_version,
+    )
 
 
 def setup_logging(level: str = "INFO") -> None:
@@ -43,7 +53,7 @@ def load_config(config_path: Optional[Path]) -> LoadBalancingModuleConfig:
     if not yaml:
         raise ImportError("PyYAML is required to load config files. Install with: pip install pyyaml")
 
-    with open(config_path) as f:
+    with open(config_path, encoding="utf-8") as f:
         config_data = yaml.safe_load(f)
 
     # Parse configuration (simplified - extend as needed)
@@ -72,7 +82,7 @@ async def run_server(config: LoadBalancingModuleConfig, config_file: Optional[Pa
     try:
         # Load backends from config file if provided
         if config_file and yaml:
-            with open(config_file) as f:
+            with open(config_file, encoding="utf-8") as f:
                 config_data = yaml.safe_load(f)
 
             for backend_data in config_data.get('backends', []):

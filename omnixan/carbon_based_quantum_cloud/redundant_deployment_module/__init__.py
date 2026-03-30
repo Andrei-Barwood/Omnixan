@@ -1,21 +1,51 @@
-# Style 1: Import everything needed
-from redundant_deployment_module import (
-    RedundantDeploymentModule,
-    ServiceConfig,
-    RegionConfig,
-    DeploymentMode,
-)
+"""
+OMNIXAN redundant deployment module exports.
 
-# Style 2: Import module and access via dot notation
-import redundant_deployment_module as rdm
-module = rdm.RedundantDeploymentModule()
+This package is part of the ``omnixan`` workspace and re-exports the public
+API from ``module.py`` for normal package imports.
+"""
 
-# Style 3: Import specific items
-from redundant_deployment_module import RedundantDeploymentModule
+from __future__ import annotations
 
-# Style 4: Check version
-from redundant_deployment_module import __version__, __author__
-print(f"Version {__version__} by {__author__}")
+__version__ = "1.0.0"
+__author__ = "Kirtan Teg Singh"
+__email__ = "kirtan@omnixan.io"
+__license__ = "MIT"
 
-# Style 5: Wildcard import (controlled by __all__)
-from redundant_deployment_module import *
+from .module import RedundantDeploymentModule
+from .module import ServiceConfig, RegionConfig, ReplicationConfig
+from .module import DeploymentResult, FailoverResult, SyncResult, RedundancyStatus
+from .module import DeploymentMode, HealthStatus, ReplicationStrategy
+from .module import DeploymentError, ReplicationError, FailoverError, QuorumNotReachedError
+
+__all__ = [
+    "__version__",
+    "__author__",
+    "__email__",
+    "__license__",
+    "RedundantDeploymentModule",
+    "ServiceConfig",
+    "RegionConfig",
+    "ReplicationConfig",
+    "DeploymentResult",
+    "FailoverResult",
+    "SyncResult",
+    "RedundancyStatus",
+    "DeploymentMode",
+    "HealthStatus",
+    "ReplicationStrategy",
+    "DeploymentError",
+    "ReplicationError",
+    "FailoverError",
+    "QuorumNotReachedError",
+]
+
+
+def get_version() -> str:
+    """Return the exported module version."""
+    return __version__
+
+
+def get_author() -> str:
+    """Return the module author."""
+    return __author__

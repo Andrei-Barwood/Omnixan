@@ -5,7 +5,11 @@ OMNIXAN Load Balancing Module
 Production-ready load balancing module for carbon_based_quantum_cloud block.
 
 Usage:
-    from load_balancing_module import LoadBalancingModule, BackendConfig, Request
+    from omnixan.carbon_based_quantum_cloud.load_balancing_module import (
+        LoadBalancingModule,
+        BackendConfig,
+        Request,
+    )
 
     async def main():
         lb = LoadBalancingModule()
@@ -72,10 +76,10 @@ __all__ = [
 ]
 
 # Core module
-from .load_balancing_module import LoadBalancingModule
+from .module import LoadBalancingModule
 
 # Configuration models
-from .load_balancing_module import (
+from .module import (
     LoadBalancingModuleConfig,
     LoadBalancingAlgorithm,
     LoadBalancingAlgorithmType,
@@ -86,7 +90,7 @@ from .load_balancing_module import (
 )
 
 # Request/Response models
-from .load_balancing_module import (
+from .module import (
     Request,
     RouteResult,
     HealthStatus,
@@ -94,16 +98,16 @@ from .load_balancing_module import (
 )
 
 # Enums
-from .load_balancing_module import (
+from .module import (
     WorkloadType,
     HealthStatusEnum,
 )
 
 # Type aliases
-from .load_balancing_module import BackendID
+from .module import BackendID
 
 # Exceptions
-from .load_balancing_module import (
+from .module import (
     LoadBalancingError,
     RoutingError,
     BackendUnavailableError,
@@ -112,7 +116,7 @@ from .load_balancing_module import (
 )
 
 # Internal classes (for advanced usage)
-from .load_balancing_module import (
+from .module import (
     CircuitBreaker,
     RateLimiter,
     BackendState,

@@ -31,29 +31,29 @@ __license__ = "MIT"
 __copyright__ = "Copyright 2025, OMNIXAN Project"
 
 # Import core module
-from .redundant_deployment_module import RedundantDeploymentModule as RedundantDeploymentModule
+from .module import RedundantDeploymentModule as RedundantDeploymentModule
 
 # Import configuration models
-from .redundant_deployment_module import ServiceConfig as ServiceConfig
-from .redundant_deployment_module import RegionConfig as RegionConfig
-from .redundant_deployment_module import ReplicationConfig as ReplicationConfig
+from .module import ServiceConfig as ServiceConfig
+from .module import RegionConfig as RegionConfig
+from .module import ReplicationConfig as ReplicationConfig
 
 # Import result models
-from .redundant_deployment_module import DeploymentResult as DeploymentResult
-from .redundant_deployment_module import FailoverResult as FailoverResult
-from .redundant_deployment_module import SyncResult as SyncResult
-from .redundant_deployment_module import RedundancyStatus as RedundancyStatus
+from .module import DeploymentResult as DeploymentResult
+from .module import FailoverResult as FailoverResult
+from .module import SyncResult as SyncResult
+from .module import RedundancyStatus as RedundancyStatus
 
 # Import enums
-from .redundant_deployment_module import DeploymentMode as DeploymentMode
-from .redundant_deployment_module import HealthStatus as HealthStatus
-from .redundant_deployment_module import ReplicationStrategy as ReplicationStrategy
+from .module import DeploymentMode as DeploymentMode
+from .module import HealthStatus as HealthStatus
+from .module import ReplicationStrategy as ReplicationStrategy
 
 # Import exceptions
-from .redundant_deployment_module import DeploymentError as DeploymentError
-from .redundant_deployment_module import ReplicationError as ReplicationError
-from .redundant_deployment_module import FailoverError as FailoverError
-from .redundant_deployment_module import QuorumNotReachedError as QuorumNotReachedError
+from .module import DeploymentError as DeploymentError
+from .module import ReplicationError as ReplicationError
+from .module import FailoverError as FailoverError
+from .module import QuorumNotReachedError as QuorumNotReachedError
 
 # Public API - Controls what gets imported with "from redundant_deployment_module import *"
 __all__ = [
