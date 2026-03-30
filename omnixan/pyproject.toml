@@ -1,39 +1,14 @@
-[build-system]
-requires = ["setuptools>=65.0", "wheel"]
-build-backend = "setuptools.build_meta"
+# Historical tooling-only pyproject for the package subdirectory.
+# Authoritative packaging metadata lives in ../pyproject.toml.
 
-[project]
-name = "omnixan"
-version = "0.2.0"
-description = "Shima System Technologies Implementation on Earth - With Quantum Computing"
-readme = "README.md"
-requires-python = ">=3.10"
-license = {text = "MIT"}
-authors = [
-    {name = "Kirtan Teg Singh"}
-]
-keywords = ["EVE", "cloud-computing", "distributed-systems", "AI", "GPU", "quantum-computing"]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: Scientific/Engineering :: Physics",
-]
-
-[project.urls]
-Homepage = "https://github.com/Andrei-Barwood/Omnixan"
-Documentation = "All sources are welcome"
-Repository = "https://github.com/Andrei-Barwood/omnixan"
-Issues = "https://github.com/Andrei-Barwood/omnixan/issues"
-
-[tool.setuptools]
-packages = ["omnixan"]
+[tool.omnixan.packaging]
+source_of_truth = "../pyproject.toml"
+status = "historical-tooling-only"
+legacy_files = ["setup.py", "requirements.txt", "pyproject.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-python_files = "test_*.py"
+python_files = ["test_*.py"]
 addopts = "-q"
 
 [tool.black]

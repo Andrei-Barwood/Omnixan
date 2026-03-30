@@ -13,6 +13,11 @@ para verificar el estado del entorno antes de ejecutar módulos opcionales.
   dependencias.
 - La raíz del repo ahora incluye un `pyproject.toml` para dar un punto de
   entrada consistente a instalación, testing y tooling.
+- El archivo autoritativo de packaging es [`pyproject.toml`](/Users/kirtantegsingh/Public/omnixan/Omnixan/pyproject.toml).
+- [`omnixan/setup.py`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/setup.py),
+  [`omnixan/requirements.txt`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/requirements.txt)
+  y [`omnixan/pyproject.toml`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/pyproject.toml)
+  quedaron marcados como archivos históricos o de conveniencia.
 
 ## Estructura
 
@@ -64,6 +69,7 @@ Instalación con extras útiles:
 
 ```bash
 PYENV_VERSION=hokkaido python -m pip install -e '.[dev]'
+PYENV_VERSION=hokkaido python -m pip install -e '.[cloud]'
 PYENV_VERSION=hokkaido python -m pip install -e '.[quantum]'
 PYENV_VERSION=hokkaido python -m pip install -e '.[distributed]'
 ```
@@ -80,6 +86,7 @@ python -m pytest omnixan/tests
 
 - Arquitectura: [`omnixan/docs/ARCHITECTURE.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/ARCHITECTURE.md)
 - Desarrollo y validación: [`omnixan/docs/DEVELOPMENT.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/DEVELOPMENT.md)
+- Packaging: [`omnixan/docs/PACKAGING.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/PACKAGING.md)
 - Estado del repo: [`omnixan/docs/REPO_STATUS.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/REPO_STATUS.md)
 - Notas cuánticas adicionales: [`omnixan/QUANTUM_SETUP.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/QUANTUM_SETUP.md)
 

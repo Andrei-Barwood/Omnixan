@@ -13,4 +13,5 @@ PYENV_VERSION=hokkaido python -m pytest omnixan/tests
 
 - [`docs/ARCHITECTURE.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/ARCHITECTURE.md)
 - [`docs/DEVELOPMENT.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/DEVELOPMENT.md)
+- [`docs/PACKAGING.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/PACKAGING.md)
 - [`docs/REPO_STATUS.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/REPO_STATUS.md)

@@ -8,6 +8,8 @@
 - Se evitó que varios módulos cuánticos fallen al importar cuando faltan backends opcionales.
 - Se agregó una base mínima de tests en `omnixan/tests`.
 - Se añadió un `pyproject.toml` en la raíz del repo para dar un flujo de instalación y validación consistente.
+- Se consolidó el packaging para que `pyproject.toml` en la raíz sea la única fuente de verdad.
+- `omnixan/setup.py`, `omnixan/requirements.txt` y `omnixan/pyproject.toml` quedaron marcados como shim o tooling histórico.
 - Se dejaron compatibles con Qiskit actual los módulos de algoritmos, optimización, corrección de errores, simulación y QML.
 - Se añadió una smoke suite opcional para validar esos módulos con el stack cuántico instalado.
 - Se corrigió el extra distribuido para instalar `dask[distributed]` junto con `ray`.
@@ -33,5 +35,5 @@
 
 - Gran parte de los módulos siguen siendo amplios y poco cubiertos por tests de comportamiento.
 - Los backends cuánticos y distribuidos no vienen instalados por defecto; su disponibilidad depende del entorno.
-- Existen archivos históricos de packaging dentro de submódulos que no son la ruta principal recomendada para trabajar con el repo.
+- Existen módulos con dependencias opcionales adicionales fuera del baseline validado; hoy están agrupadas en extras temáticos, no instaladas por defecto.
 - El `venv/` histórico del repo puede contener paquetes ajenos al stack actual; conviene validarlo con `python -m pip check` si se reutiliza.

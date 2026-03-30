@@ -57,8 +57,14 @@ PYENV_VERSION=hokkaido python -m omnixan.carbon_based_quantum_cloud.load_balanci
 
 - El `pyproject.toml` de la raíz es la referencia actual para instalar y testear el proyecto.
 - El repo contiene un `venv/` dentro del árbol histórico; no debe tomarse como fuente de verdad de packaging.
+- Los archivos `omnixan/setup.py`, `omnixan/requirements.txt` y `omnixan/pyproject.toml` se conservan solo por compatibilidad y documentación local.
 - Los módulos cuánticos están preparados para importarse aunque falten backends, pero sus funciones concretas sí requieren instalar los extras adecuados.
 - El stack distribuido mínimo validado en esta revisión usa `ray` y `dask[distributed]`.
 - La smoke suite cuántica se salta automáticamente cuando `qiskit` y `qiskit-aer` no están instalados.
 - La smoke suite distribuida se salta automáticamente cuando faltan `ray` o `dask[distributed]`.
 - En esta revisión, la validación módulo por módulo del stack cuántico se ejecutó sobre Python 3.10.
+
+## Packaging
+
+- Fuente de verdad: [`/pyproject.toml`](/Users/kirtantegsingh/Public/omnixan/Omnixan/pyproject.toml)
+- Referencia operativa: [`PACKAGING.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/PACKAGING.md)

@@ -21,6 +21,34 @@ def test_root_pyproject_exists_and_is_parseable() -> None:
 
     assert data["project"]["name"] == "omnixan"
     assert data["project"]["version"] == "0.2.0"
+    assert "cloud" in data["project"]["optional-dependencies"]
+    assert any(
+        dep.startswith("dask[distributed]")
+        for dep in data["project"]["optional-dependencies"]["distributed"]
+    )
+    assert any(
+        dep.startswith("pydantic-settings")
+        for dep in data["project"]["optional-dependencies"]["cloud"]
+    )
+
+
+def test_legacy_packaging_files_are_marked_historical() -> None:
+    legacy_pyproject = tomllib.loads(
+        (REPO_ROOT / "omnixan" / "pyproject.toml").read_text(encoding="utf-8")
+    )
+    setup_text = (REPO_ROOT / "omnixan" / "setup.py").read_text(encoding="utf-8")
+    requirements_text = (
+        REPO_ROOT / "omnixan" / "requirements.txt"
+    ).read_text(encoding="utf-8")
+
+    assert (
+        legacy_pyproject["tool"]["omnixan"]["packaging"]["source_of_truth"]
+        == "../pyproject.toml"
+    )
+    assert "Authoritative packaging metadata lives in ../pyproject.toml" in setup_text
+    assert "Source of truth: ../pyproject.toml" in requirements_text
+    assert "scikit-learn" not in requirements_text
+    assert "tensorflow-quantum" not in requirements_text
 
 
 def test_core_entrypoints_import_cleanly() -> None:
