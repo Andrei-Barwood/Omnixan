@@ -17,6 +17,7 @@
 - Se añadió una smoke suite opcional para runtime distribuido y módulos de fog, coherencia de caché y mitigación de fallos.
 - Se consolidó una CLI oficial mínima con `omnixan`, `omnixan-doctor`, `omnixan-load-balancing` y `omnixan-redundant-deployment`.
 - Los `main()` incrustados dentro de muchos `module.py` quedaron tratados como demos locales, no como comandos oficiales.
+- Se añadió una smoke suite core para cubrir import, inicialización y una operación simple en los seis bloques principales no cuánticos.
 
 ## Validación distribuida profunda ejecutada
 

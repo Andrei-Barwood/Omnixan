@@ -42,6 +42,12 @@ PYENV_VERSION=hokkaido python -m omnixan doctor
 PYENV_VERSION=hokkaido python -m pytest omnixan/tests
 ```
 
+Smoke suite core por bloque:
+
+```bash
+PYENV_VERSION=hokkaido python -m pytest omnixan/tests -k core_block_smoke
+```
+
 Smoke suite cuántica opcional:
 
 ```bash

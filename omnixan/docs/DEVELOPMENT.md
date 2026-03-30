@@ -20,6 +20,12 @@ Pruebas mínimas del repo:
 PYENV_VERSION=hokkaido python -m pytest omnixan/tests
 ```
 
+Smoke suite core por bloque:
+
+```bash
+PYENV_VERSION=hokkaido python -m pytest omnixan/tests -k core_block_smoke
+```
+
 Preparación del stack cuántico opcional:
 
 ```bash
@@ -62,6 +68,7 @@ PYENV_VERSION=hokkaido python -m omnixan load-balancing --version
 - El stack distribuido mínimo validado en esta revisión usa `ray` y `dask[distributed]`.
 - La smoke suite cuántica se salta automáticamente cuando `qiskit` y `qiskit-aer` no están instalados.
 - La smoke suite distribuida se salta automáticamente cuando faltan `ray` o `dask[distributed]`.
+- La smoke suite core cubre un módulo crítico por bloque principal sin depender de stacks opcionales pesados.
 - En esta revisión, la validación módulo por módulo del stack cuántico se ejecutó sobre Python 3.10.
 
 ## Packaging
