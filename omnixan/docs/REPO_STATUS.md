@@ -10,6 +10,16 @@
 - Se añadió un `pyproject.toml` en la raíz del repo para dar un flujo de instalación y validación consistente.
 - Se dejaron compatibles con Qiskit actual los módulos de algoritmos, optimización, corrección de errores, simulación y QML.
 - Se añadió una smoke suite opcional para validar esos módulos con el stack cuántico instalado.
+- Se corrigió el extra distribuido para instalar `dask[distributed]` junto con `ray`.
+- Se amplió `omnixan.doctor` con chequeos de `ray`, `ray.data`, `dask.array`, `dask.distributed` y módulos distribuidos clave.
+- Se añadió una smoke suite opcional para runtime distribuido y módulos de fog, coherencia de caché y mitigación de fallos.
+
+## Validación distribuida profunda ejecutada
+
+- El extra `.[distributed,dev]` quedó verificado en un `venv` limpio temporal.
+- `ray` inicializa localmente y ejecuta una tarea remota simple.
+- `dask[distributed]` crea un `LocalCluster` y resuelve un `future`.
+- `fog_computing_module`, `cache_coherence_module` y `fault_mitigation_module` pasaron smokes funcionales.
 
 ## Validación cuántica profunda ejecutada
 

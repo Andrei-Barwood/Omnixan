@@ -44,6 +44,14 @@ python -m pip install -e '.[quantum,dev]'
 python -m pytest omnixan/tests -k quantum_stack_smoke
 ```
 
+Smoke suite distribuida opcional:
+
+```bash
+python -m pip install -e '.[distributed,dev]'
+python -m pytest omnixan/tests -k distributed_stack_smoke
+python -m omnixan.doctor --json
+```
+
 ## Instalación
 
 Instalación editable mínima:

@@ -17,22 +17,66 @@ import sys
 from typing import Any
 
 
-OPTIONAL_DEPENDENCIES: dict[str, str] = {
-    "numpy": "Numerical modules",
-    "pydantic": "Configuration and validation models",
-    "ray": "Distributed execution modules",
-    "dask": "Distributed execution modules",
-    "qiskit": "Quantum backends",
-    "qiskit_aer": "Quantum simulator backend",
-    "cirq": "Quantum backends",
-    "pennylane": "Quantum machine learning backends",
-    "qutip": "Quantum analysis and simulation tooling",
+OPTIONAL_DEPENDENCIES: dict[str, dict[str, str]] = {
+    "numpy": {
+        "purpose": "Numerical modules",
+        "probe": "spec",
+    },
+    "pydantic": {
+        "purpose": "Configuration and validation models",
+        "probe": "spec",
+    },
+    "ray": {
+        "purpose": "Distributed execution runtime",
+        "probe": "spec",
+    },
+    "ray.data": {
+        "purpose": "Ray dataset APIs",
+        "probe": "spec",
+    },
+    "dask": {
+        "purpose": "Distributed task graph runtime",
+        "probe": "spec",
+    },
+    "dask.array": {
+        "purpose": "Parallel array APIs",
+        "probe": "spec",
+    },
+    "dask.distributed": {
+        "purpose": "Distributed scheduler and workers",
+        "probe": "import",
+    },
+    "qiskit": {
+        "purpose": "Quantum backends",
+        "probe": "spec",
+    },
+    "qiskit_aer": {
+        "purpose": "Quantum simulator backend",
+        "probe": "spec",
+    },
+    "cirq": {
+        "purpose": "Quantum backends",
+        "probe": "spec",
+    },
+    "pennylane": {
+        "purpose": "Quantum machine learning backends",
+        "probe": "spec",
+    },
+    "qutip": {
+        "purpose": "Quantum analysis and simulation tooling",
+        "probe": "spec",
+    },
 }
 
 MODULE_CHECKS: dict[str, str] = {
     "package": "omnixan",
     "load_balancing": "omnixan.carbon_based_quantum_cloud.load_balancing_module",
     "redundant_deployment": "omnixan.carbon_based_quantum_cloud.redundant_deployment_module",
+    "fog_computing": "omnixan.in_memory_computing_cloud.fog_computing_module.module",
+    "cache_coherence": "omnixan.edge_computing_network.cache_coherence_module.module",
+    "non_blocking": "omnixan.heterogenous_computing_group.non_blocking_module.module",
+    "trillion_thread_parallel": "omnixan.heterogenous_computing_group.trillion_thread_parallel_module.module",
+    "fault_mitigation": "omnixan.virtualized_cluster.fault_mitigation_module.module",
     "quantum_algorithm": "omnixan.quantum_cloud_architecture.quantum_algorithm_module.module",
     "quantum_circuit_optimizer": "omnixan.quantum_cloud_architecture.quantum_circuit_optimizer_module.module",
     "quantum_error_correction": "omnixan.quantum_cloud_architecture.quantum_error_correction_module.module",
@@ -43,9 +87,33 @@ MODULE_CHECKS: dict[str, str] = {
 
 def _probe_dependency(module_name: str) -> dict[str, Any]:
     """Check whether an optional dependency can be located."""
+    check = OPTIONAL_DEPENDENCIES[module_name]
+    purpose = check["purpose"]
+    probe = check.get("probe", "spec")
+
+    if probe == "import":
+        try:
+            importlib.import_module(module_name)
+            return {
+                "available": True,
+                "purpose": purpose,
+            }
+        except Exception as exc:  # pragma: no cover - exercised via CLI
+            return {
+                "available": False,
+                "purpose": purpose,
+                "error_type": type(exc).__name__,
+                "error": str(exc),
+            }
+
+    try:
+        available = importlib.util.find_spec(module_name) is not None
+    except ModuleNotFoundError:
+        available = False
+
     return {
-        "available": importlib.util.find_spec(module_name) is not None,
-        "purpose": OPTIONAL_DEPENDENCIES[module_name],
+        "available": available,
+        "purpose": purpose,
     }
 
 
@@ -108,7 +176,10 @@ def _render_text(report: dict[str, Any]) -> str:
 
     for name, data in report["dependencies"].items():
         status = "ok" if data["available"] else "missing"
-        lines.append(f"  - {name}: {status} ({data['purpose']})")
+        line = f"  - {name}: {status} ({data['purpose']})"
+        if not data["available"] and "error_type" in data:
+            line += f" [{data['error_type']}: {data['error']}]"
+        lines.append(line)
 
     lines.append("")
     lines.append("Module imports:")
