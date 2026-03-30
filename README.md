@@ -37,6 +37,13 @@ PYENV_VERSION=hokkaido python -m omnixan.doctor
 PYENV_VERSION=hokkaido python -m pytest omnixan/tests
 ```
 
+Smoke suite cuántica opcional:
+
+```bash
+python -m pip install -e '.[quantum,dev]'
+python -m pytest omnixan/tests -k quantum_stack_smoke
+```
+
 ## Instalación
 
 Instalación editable mínima:
@@ -51,6 +58,14 @@ Instalación con extras útiles:
 PYENV_VERSION=hokkaido python -m pip install -e '.[dev]'
 PYENV_VERSION=hokkaido python -m pip install -e '.[quantum]'
 PYENV_VERSION=hokkaido python -m pip install -e '.[distributed]'
+```
+
+Para una validación cuántica profunda en un solo entorno:
+
+```bash
+python -m pip install -e '.[quantum,dev]'
+python -m omnixan.doctor --json
+python -m pytest omnixan/tests
 ```
 
 ## Documentación

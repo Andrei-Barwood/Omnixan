@@ -26,6 +26,7 @@ OPTIONAL_DEPENDENCIES: dict[str, str] = {
     "qiskit_aer": "Quantum simulator backend",
     "cirq": "Quantum backends",
     "pennylane": "Quantum machine learning backends",
+    "qutip": "Quantum analysis and simulation tooling",
 }
 
 MODULE_CHECKS: dict[str, str] = {
@@ -33,6 +34,9 @@ MODULE_CHECKS: dict[str, str] = {
     "load_balancing": "omnixan.carbon_based_quantum_cloud.load_balancing_module",
     "redundant_deployment": "omnixan.carbon_based_quantum_cloud.redundant_deployment_module",
     "quantum_algorithm": "omnixan.quantum_cloud_architecture.quantum_algorithm_module.module",
+    "quantum_circuit_optimizer": "omnixan.quantum_cloud_architecture.quantum_circuit_optimizer_module.module",
+    "quantum_error_correction": "omnixan.quantum_cloud_architecture.quantum_error_correction_module.module",
+    "quantum_ml": "omnixan.quantum_cloud_architecture.quantum_ml_module.module",
     "quantum_simulator": "omnixan.quantum_cloud_architecture.quantum_simulator_module.module",
 }
 

@@ -4,8 +4,12 @@ import importlib
 import json
 import subprocess
 import sys
-import tomllib
 from pathlib import Path
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover - Python < 3.11
+    import tomli as tomllib
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -75,3 +79,8 @@ def test_doctor_json_report_contains_expected_checks() -> None:
     assert report["package"]["version"] == "0.2.0"
     assert report["module_imports"]["load_balancing"]["status"] == "ok"
     assert report["module_imports"]["redundant_deployment"]["status"] == "ok"
+    assert report["module_imports"]["quantum_algorithm"]["status"] == "ok"
+    assert report["module_imports"]["quantum_circuit_optimizer"]["status"] == "ok"
+    assert report["module_imports"]["quantum_error_correction"]["status"] == "ok"
+    assert report["module_imports"]["quantum_ml"]["status"] == "ok"
+    assert report["module_imports"]["quantum_simulator"]["status"] == "ok"

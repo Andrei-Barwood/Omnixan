@@ -32,7 +32,7 @@ try:
     )
     from qiskit.transpiler import PassManager, CouplingMap
     from qiskit.transpiler.passes import (
-        Optimize1qGates, CXCancellation, CommutativeCancellation,
+        Optimize1qGates, InverseCancellation, CommutativeCancellation,
         RemoveBarriers, RemoveDiagonalGatesBeforeMeasure,
         Depth, Size, CountOps
     )
@@ -190,7 +190,7 @@ class GateCancellationPass(OptimizationPassBase):
         
         # Use Qiskit's built-in cancellation
         pm = PassManager([
-            CXCancellation(),
+            InverseCancellation(),
             CommutativeCancellation()
         ])
         return pm.run(circuit)

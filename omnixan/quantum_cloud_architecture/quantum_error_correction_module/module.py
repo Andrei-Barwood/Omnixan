@@ -152,6 +152,44 @@ class SyndromeDecodingError(QuantumErrorCorrectionError):
     pass
 
 
+def _get_or_add_quantum_register(
+    circuit: QuantumCircuit,
+    size: int,
+    name: str,
+) -> QuantumRegister:
+    """Reuse a named quantum register or add it when missing."""
+    for qreg in circuit.qregs:
+        if qreg.name == name:
+            if len(qreg) != size:
+                raise ValueError(
+                    f'Quantum register "{name}" has size {len(qreg)}, expected {size}'
+                )
+            return qreg
+
+    qreg = QuantumRegister(size, name)
+    circuit.add_register(qreg)
+    return qreg
+
+
+def _get_or_add_classical_register(
+    circuit: QuantumCircuit,
+    size: int,
+    name: str,
+) -> ClassicalRegister:
+    """Reuse a named classical register or add it when missing."""
+    for creg in circuit.cregs:
+        if creg.name == name:
+            if len(creg) != size:
+                raise ValueError(
+                    f'Classical register "{name}" has size {len(creg)}, expected {size}'
+                )
+            return creg
+
+    creg = ClassicalRegister(size, name)
+    circuit.add_register(creg)
+    return creg
+
+
 # ============================================================================
 # Error Correction Code Implementations
 # ============================================================================
@@ -236,10 +274,8 @@ class BitFlip3Code(ErrorCorrectionCodeBase):
         qc = circuit.copy()
         
         # Create ancilla register if not exists
-        ancilla = QuantumRegister(2, 'ancilla')
-        syndrome_cr = ClassicalRegister(2, 'syndrome')
-        qc.add_register(ancilla)
-        qc.add_register(syndrome_cr)
+        ancilla = _get_or_add_quantum_register(qc, 2, 'ancilla')
+        syndrome_cr = _get_or_add_classical_register(qc, 2, 'syndrome')
         
         data = circuit.qregs[0]
         
@@ -329,10 +365,8 @@ class PhaseFlip3Code(ErrorCorrectionCodeBase):
         """Measure syndrome for phase-flip code"""
         qc = circuit.copy()
         
-        ancilla = QuantumRegister(2, 'ancilla')
-        syndrome_cr = ClassicalRegister(2, 'syndrome')
-        qc.add_register(ancilla)
-        qc.add_register(syndrome_cr)
+        ancilla = _get_or_add_quantum_register(qc, 2, 'ancilla')
+        syndrome_cr = _get_or_add_classical_register(qc, 2, 'syndrome')
         
         data = circuit.qregs[0]
         
@@ -433,10 +467,8 @@ class Shor9Code(ErrorCorrectionCodeBase):
         qc = circuit.copy()
         
         # 6 ancillas for bit-flip + 2 for phase-flip
-        ancilla = QuantumRegister(8, 'ancilla')
-        syndrome_cr = ClassicalRegister(8, 'syndrome')
-        qc.add_register(ancilla)
-        qc.add_register(syndrome_cr)
+        ancilla = _get_or_add_quantum_register(qc, 8, 'ancilla')
+        syndrome_cr = _get_or_add_classical_register(qc, 8, 'syndrome')
         
         data = circuit.qregs[0]
         
@@ -590,10 +622,8 @@ class Steane7Code(ErrorCorrectionCodeBase):
         """Measure syndrome for Steane code"""
         qc = circuit.copy()
         
-        ancilla = QuantumRegister(6, 'ancilla')
-        syndrome_cr = ClassicalRegister(6, 'syndrome')
-        qc.add_register(ancilla)
-        qc.add_register(syndrome_cr)
+        ancilla = _get_or_add_quantum_register(qc, 6, 'ancilla')
+        syndrome_cr = _get_or_add_classical_register(qc, 6, 'syndrome')
         
         data = circuit.qregs[0]
         
@@ -724,10 +754,8 @@ class RepetitionCode(ErrorCorrectionCodeBase):
         qc = circuit.copy()
         
         num_ancilla = self.distance - 1
-        ancilla = QuantumRegister(num_ancilla, 'ancilla')
-        syndrome_cr = ClassicalRegister(num_ancilla, 'syndrome')
-        qc.add_register(ancilla)
-        qc.add_register(syndrome_cr)
+        ancilla = _get_or_add_quantum_register(qc, num_ancilla, 'ancilla')
+        syndrome_cr = _get_or_add_classical_register(qc, num_ancilla, 'syndrome')
         
         data = circuit.qregs[0]
         

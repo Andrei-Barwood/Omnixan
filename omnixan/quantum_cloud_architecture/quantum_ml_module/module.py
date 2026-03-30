@@ -504,19 +504,27 @@ class VariationalQuantumClassifier(QuantumMLModel):
     
     def _loss(self, params: np.ndarray, X: np.ndarray, y: np.ndarray) -> float:
         """Compute cross-entropy loss"""
-        predictions = []
-        for x in X:
-            exp_val = self._compute_expectation(x, params)
-            prob = (exp_val + 1) / 2  # Map [-1, 1] to [0, 1]
-            predictions.append(prob)
-        
-        predictions = np.array(predictions)
+        predictions = self._predict_proba_with_params(X, params)
         predictions = np.clip(predictions, 1e-10, 1 - 1e-10)
         
         # Binary cross-entropy
         loss = -np.mean(y * np.log(predictions) + (1 - y) * np.log(1 - predictions))
         
         return loss
+
+    def _predict_proba_with_params(
+        self,
+        X: np.ndarray,
+        params: np.ndarray,
+    ) -> np.ndarray:
+        """Predict class probabilities for arbitrary model parameters."""
+        probas = []
+        for x in X:
+            exp_val = self._compute_expectation(x, params)
+            prob = (exp_val + 1) / 2
+            probas.append(prob)
+
+        return np.array(probas)
     
     def _gradient(
         self,
@@ -576,7 +584,7 @@ class VariationalQuantumClassifier(QuantumMLModel):
             loss = self._loss(params, X, y)
             
             # Compute accuracy
-            predictions = self.predict(X)
+            predictions = (self._predict_proba_with_params(X, params) > 0.5).astype(int)
             accuracy = np.mean(predictions == y)
             
             # Validation metrics
@@ -584,7 +592,9 @@ class VariationalQuantumClassifier(QuantumMLModel):
             if validation_data:
                 X_val, y_val = validation_data
                 val_loss = self._loss(params, X_val, y_val)
-                val_predictions = self.predict(X_val)
+                val_predictions = (
+                    self._predict_proba_with_params(X_val, params) > 0.5
+                ).astype(int)
                 val_acc = np.mean(val_predictions == y_val)
             
             metrics = TrainingMetrics(
@@ -621,14 +631,8 @@ class VariationalQuantumClassifier(QuantumMLModel):
         """Predict class probabilities"""
         if not self.trained:
             raise ModelNotTrainedError("Model must be trained before prediction")
-        
-        probas = []
-        for x in X:
-            exp_val = self._compute_expectation(x, self.parameters)
-            prob = (exp_val + 1) / 2
-            probas.append(prob)
-        
-        return np.array(probas)
+
+        return self._predict_proba_with_params(X, self.parameters)
 
 
 class QuantumKernel:

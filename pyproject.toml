@@ -49,9 +49,11 @@ quantum = [
     "pennylane>=0.33.0",
     "qiskit>=1.0.0",
     "qiskit-aer>=0.13.0",
+    "qutip>=5.0.0",
 ]
 dev = [
     "pytest>=7.4.0",
+    "tomli>=2.0.1; python_version < '3.11'",
 ]
 docs = [
     "sphinx>=7.2.0",

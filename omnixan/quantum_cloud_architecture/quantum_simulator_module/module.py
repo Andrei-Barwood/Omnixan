@@ -25,7 +25,6 @@ try:
     from qiskit.quantum_info import Statevector, DensityMatrix
     from qiskit_aer import Aer, AerSimulator
     from qiskit_aer.noise import NoiseModel
-    from qiskit.providers.aer import QasmSimulator
     QISKIT_AVAILABLE = True
 except ImportError:
     QISKIT_AVAILABLE = False
@@ -203,12 +202,19 @@ class QiskitSimulatorBackend(SimulatorBackendBase):
     def __init__(self, config: SimulatorConfig):
         self.config = config
         self.backend_map = {
-            SimulationMethod.STATEVECTOR: 'statevector_simulator',
-            SimulationMethod.DENSITY_MATRIX: 'density_matrix_simulator',
-            SimulationMethod.STABILIZER: 'stabilizer_simulator',
-            SimulationMethod.MATRIX_PRODUCT_STATE: 'matrix_product_state_simulator',
+            SimulationMethod.STATEVECTOR: 'statevector',
+            SimulationMethod.DENSITY_MATRIX: 'density_matrix',
+            SimulationMethod.STABILIZER: 'stabilizer',
+            SimulationMethod.MATRIX_PRODUCT_STATE: 'matrix_product_state',
         }
         self._backend: Optional[AerSimulator] = None
+
+    @staticmethod
+    def _strip_final_measurements(circuit: QuantumCircuit) -> QuantumCircuit:
+        """Return a copy of the circuit without terminal measurements."""
+        if hasattr(circuit, "remove_final_measurements"):
+            return circuit.remove_final_measurements(inplace=False)
+        return circuit.copy()
     
     def _get_backend(self, method: SimulationMethod) -> AerSimulator:
         """Get appropriate Qiskit backend"""
@@ -266,8 +272,10 @@ class QiskitSimulatorBackend(SimulatorBackendBase):
                 result = job.result()
                 counts = result.get_counts(circuit)
                 
-                # Get statevector
-                statevector = result.get_statevector(circuit)
+                # Recover the quantum state prior to final measurements.
+                statevector = Statevector.from_instruction(
+                    self._strip_final_measurements(circuit)
+                )
                 
                 execution_time = time.time() - start_time
                 
@@ -323,17 +331,11 @@ class QiskitSimulatorBackend(SimulatorBackendBase):
     
     def get_statevector(self, circuit: QuantumCircuit) -> Statevector:
         """Get statevector representation"""
-        backend = Aer.get_backend('statevector_simulator')
-        job = backend.run(circuit)
-        result = job.result()
-        return result.get_statevector(circuit)
+        return Statevector.from_instruction(self._strip_final_measurements(circuit))
     
     def get_density_matrix(self, circuit: QuantumCircuit) -> DensityMatrix:
         """Get density matrix representation"""
-        backend = Aer.get_backend('density_matrix_simulator')
-        job = backend.run(circuit)
-        result = job.result()
-        return result.data(circuit).get('density_matrix')
+        return DensityMatrix.from_instruction(self._strip_final_measurements(circuit))
     
     def _build_noise_model(self) -> Optional[NoiseModel]:
         """Build noise model from configuration"""

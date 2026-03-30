@@ -22,8 +22,7 @@ try:
     from qiskit import QuantumCircuit, transpile
     from qiskit.circuit import Parameter
     from qiskit.providers import Backend as QiskitBackend
-    from qiskit_aer import Aer
-    from qiskit.algorithms import Shor, Grover, VQE, QAOA
+    from qiskit_aer import AerSimulator
     from qiskit.circuit.library import QFT
     QISKIT_AVAILABLE = True
 except ImportError:
@@ -469,7 +468,7 @@ class QuantumAlgorithmModule:
     def _initialize_backends(self) -> None:
         """Initialize quantum computing backends"""
         if QISKIT_AVAILABLE:
-            self.backends[BackendType.QISKIT] = Aer.get_backend('qasm_simulator')
+            self.backends[BackendType.QISKIT] = AerSimulator()
             logger.info("Qiskit backend initialized")
         
         if CIRQ_AVAILABLE:
