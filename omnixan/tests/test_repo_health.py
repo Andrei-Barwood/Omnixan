@@ -81,18 +81,33 @@ def test_core_entrypoints_import_cleanly() -> None:
 
 
 def test_quantum_pipeline_contracts_are_available() -> None:
+    data_model = importlib.import_module("omnixan.data_model")
     module = importlib.import_module("omnixan.quantum_pipeline")
+    request = data_model.QuantumRequest(
+        title="baseline-demo",
+        objective="Generate a canonical baseline quantum request",
+    )
     mission = module.QuantumMission(
+        request_id=request.request_id,
         title="baseline-demo",
         objective="Generate a canonical baseline quantum mission",
     )
     plan = module.build_baseline_quantum_plan(mission)
+    job = module.build_baseline_quantum_job(mission, plan)
     stages = module.get_canonical_quantum_pipeline()
 
+    assert module.QuantumExecutionPlan is data_model.QuantumExecutionPlan
+    assert module.QuantumJob is data_model.QuantumJob
     assert module.QuantumPipelineStage.MISSION.value == "mission"
+    assert request.preferred_backend_mode.value == "simulator_local"
     assert mission.preferred_backend_mode.value == "simulator_local"
     assert plan.mission_id == mission.mission_id
+    assert plan.backend.mode == mission.preferred_backend_mode
+    assert plan.policy.execution_path == "simulate"
     assert plan.execution_path == "simulate"
+    assert job.mission_id == mission.mission_id
+    assert job.backend_id == plan.backend.backend_id
+    assert job.stage.value == "execution"
     assert stages[0].service_alias == "mission-service"
     assert stages[-1].service_alias == "observation-service"
 

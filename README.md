@@ -87,6 +87,7 @@ python -m omnixan redundant-deployment --smoke --json
 - [`omnixan/docs/AMARR_PRINCIPLES.md`](./omnixan/docs/AMARR_PRINCIPLES.md)
 - [`omnixan/docs/BLOCK_CANON_MAP.md`](./omnixan/docs/BLOCK_CANON_MAP.md)
 - [`omnixan/docs/CLI.md`](./omnixan/docs/CLI.md)
+- [`omnixan/docs/DATA_MODEL.md`](./omnixan/docs/DATA_MODEL.md)
 - [`omnixan/docs/DAILY_TASKS.md`](./omnixan/docs/DAILY_TASKS.md)
 - [`omnixan/docs/DEVELOPMENT.md`](./omnixan/docs/DEVELOPMENT.md)
 - [`omnixan/docs/INTERNAL_RELEASE_2026-04-01.md`](./omnixan/docs/INTERNAL_RELEASE_2026-04-01.md)

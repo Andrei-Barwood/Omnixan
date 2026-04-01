@@ -36,6 +36,7 @@ def test_release_artifacts_exist() -> None:
     amarr_principles = REPO_ROOT / "omnixan" / "docs" / "AMARR_PRINCIPLES.md"
     service_language = REPO_ROOT / "omnixan" / "docs" / "SERVICE_LANGUAGE.md"
     service_map = REPO_ROOT / "omnixan" / "docs" / "SERVICE_MAP.md"
+    data_model = REPO_ROOT / "omnixan" / "docs" / "DATA_MODEL.md"
     block_canon_map = REPO_ROOT / "omnixan" / "docs" / "BLOCK_CANON_MAP.md"
     module_classification = (
         REPO_ROOT / "omnixan" / "docs" / "MODULE_CLASSIFICATION.md"
@@ -75,6 +76,11 @@ def test_release_artifacts_exist() -> None:
     assert "## Mapa oficial" in service_map_text
     assert "`mission-service`" in service_map_text
     assert "`observation-service`" in service_map_text
+    assert data_model.exists()
+    data_model_text = data_model.read_text(encoding="utf-8")
+    assert "## Entidades canonicas" in data_model_text
+    assert "`QuantumRequest`" in data_model_text
+    assert "`QuantumJob`" in data_model_text
     assert block_canon_map.exists()
     block_map_text = block_canon_map.read_text(encoding="utf-8")
     assert "`quantum_cloud_architecture`" in block_map_text

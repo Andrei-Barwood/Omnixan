@@ -16,7 +16,8 @@ cuántica canónica y sus contratos mínimos viven en `QUANTUM_PIPELINE.md` y
 `omnixan.quantum_pipeline`. La auditoría de huecos cuánticos y el backlog
 priorizado de integración viven en `QUANTUM_GAP_AUDIT.md`. El mapa oficial de
 servicios con exposición pública y contratos de alto nivel vive en
-`SERVICE_MAP.md`.
+`SERVICE_MAP.md`. El lenguaje de datos público del producto vive en
+`DATA_MODEL.md` y `omnixan.data_model`.
 
 ## Bloques principales
 

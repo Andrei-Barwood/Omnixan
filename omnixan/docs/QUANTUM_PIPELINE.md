@@ -34,12 +34,20 @@ La historia técnica oficial de OMNIXAN ahora es esta:
 
 La interfaz mínima de la pipeline vive en
 [`omnixan/quantum_pipeline.py`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/quantum_pipeline.py).
+El lenguaje de datos público compartido por la pipeline vive en
+[`omnixan/data_model.py`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/data_model.py).
 
 Los contratos base son:
 
+- `QuantumRequest`
 - `QuantumMission`
+- `QuantumBackendProfile`
+- `QuantumExecutionPolicy`
 - `QuantumExecutionPlan`
 - `QuantumCircuitArtifact`
+- `QuantumJob`
+- `QuantumResultSummary`
+- `QuantumMetricRecord`
 - `QuantumExecutionRecord`
 - `QuantumMitigationRecord`
 - `QuantumPipelineReport`

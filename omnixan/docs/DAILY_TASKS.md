@@ -170,6 +170,7 @@ se usa como documento operativo para llevar OMNIXAN desde "repo verificable" a
   backend, politica, resultado y metrica.
 - Validación: evitar duplicados semanticos entre bloques.
 - Criterio de cierre: existe un lenguaje de datos comun para el flujo oficial.
+- Estado: completado en `DATA_MODEL.md` y `omnixan.data_model`.
 
 ### Día 20: Contratos de API
 

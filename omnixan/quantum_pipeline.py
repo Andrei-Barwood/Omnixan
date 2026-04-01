@@ -4,32 +4,25 @@ Canonical quantum pipeline contracts for OMNIXAN.
 
 from __future__ import annotations
 
-from enum import Enum
-from typing import Any
-from uuid import uuid4
-
 from pydantic import BaseModel, ConfigDict, Field
 
-
-class QuantumBackendMode(str, Enum):
-    """Supported execution modes for the canonical quantum pipeline."""
-
-    SIMULATOR_LOCAL = "simulator_local"
-    SIMULATOR_NOISY = "simulator_noisy"
-    HYBRID_RUNTIME = "hybrid_runtime"
-    EXTERNAL_BACKEND = "external_backend"
-
-
-class QuantumPipelineStage(str, Enum):
-    """Ordered canonical stages for OMNIXAN's quantum flow."""
-
-    MISSION = "mission"
-    PLANNING = "planning"
-    CIRCUIT_DESIGN = "circuit_design"
-    OPTIMIZATION = "optimization"
-    EXECUTION = "execution"
-    MITIGATION = "mitigation"
-    REPORTING = "reporting"
+from omnixan.data_model import (
+    QuantumBackendMode,
+    QuantumBackendProfile,
+    QuantumCircuitArtifact,
+    QuantumExecutionPlan,
+    QuantumExecutionPolicy,
+    QuantumExecutionRecord,
+    QuantumJob,
+    QuantumJobStatus,
+    QuantumMetricRecord,
+    QuantumMission,
+    QuantumMitigationRecord,
+    QuantumPipelineReport,
+    QuantumPipelineStage,
+    QuantumRequest,
+    QuantumResultSummary,
+)
 
 
 class PipelineStageDefinition(BaseModel):
@@ -45,88 +38,6 @@ class PipelineStageDefinition(BaseModel):
     baseline_status: str = Field(
         description="One of: supported, partial, conceptual, degraded"
     )
-
-
-class QuantumMission(BaseModel):
-    """User-facing request that enters the canonical quantum pipeline."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    mission_id: str = Field(default_factory=lambda: f"mission-{uuid4().hex[:12]}")
-    title: str
-    objective: str
-    algorithm_family: str | None = None
-    preferred_backend_mode: QuantumBackendMode = QuantumBackendMode.SIMULATOR_LOCAL
-    constraints: dict[str, Any] = Field(default_factory=dict)
-    payload: dict[str, Any] = Field(default_factory=dict)
-    required_capabilities: list[str] = Field(default_factory=list)
-
-
-class QuantumExecutionPlan(BaseModel):
-    """Validated execution plan derived from a quantum mission."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    mission_id: str
-    backend_mode: QuantumBackendMode
-    selected_services: list[str]
-    target_modules: list[str]
-    optimization_goal: str = "balanced"
-    mitigation_strategy: str = "baseline_mitigation"
-    execution_path: str = "simulate"
-    notes: list[str] = Field(default_factory=list)
-
-
-class QuantumCircuitArtifact(BaseModel):
-    """Circuit design output shared between construction and execution stages."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    mission_id: str
-    representation: str = "abstract"
-    qubit_count: int = 0
-    depth: int | None = None
-    circuit_ref: str | None = None
-    metadata: dict[str, Any] = Field(default_factory=dict)
-
-
-class QuantumExecutionRecord(BaseModel):
-    """Execution or simulation result for the canonical pipeline."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    mission_id: str
-    backend_mode: QuantumBackendMode
-    execution_path: str
-    status: str
-    shots: int = 0
-    result_summary: dict[str, Any] = Field(default_factory=dict)
-
-
-class QuantumMitigationRecord(BaseModel):
-    """Mitigation or correction output attached to a pipeline run."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    mission_id: str
-    strategy: str
-    applied: bool
-    fidelity_estimate: float | None = None
-    notes: list[str] = Field(default_factory=list)
-
-
-class QuantumPipelineReport(BaseModel):
-    """End-to-end report produced by the canonical quantum pipeline."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    mission: QuantumMission
-    plan: QuantumExecutionPlan
-    circuit: QuantumCircuitArtifact
-    execution: QuantumExecutionRecord
-    mitigation: QuantumMitigationRecord
-    stage_health: dict[str, str] = Field(default_factory=dict)
-    narrative_status: str = "baseline_ready"
 
 
 def get_canonical_quantum_pipeline() -> list[PipelineStageDefinition]:
@@ -202,6 +113,74 @@ def get_canonical_quantum_pipeline() -> list[PipelineStageDefinition]:
     ]
 
 
+def build_baseline_backend_profile(
+    mode: QuantumBackendMode,
+) -> QuantumBackendProfile:
+    """Build the canonical backend profile for the baseline flow."""
+
+    provider = "local" if mode != QuantumBackendMode.EXTERNAL_BACKEND else "external"
+    backend_name_map = {
+        QuantumBackendMode.SIMULATOR_LOCAL: "baseline-local-simulator",
+        QuantumBackendMode.SIMULATOR_NOISY: "baseline-noisy-simulator",
+        QuantumBackendMode.HYBRID_RUNTIME: "baseline-hybrid-runtime",
+        QuantumBackendMode.EXTERNAL_BACKEND: "baseline-external-backend",
+    }
+    supports_noise = mode == QuantumBackendMode.SIMULATOR_NOISY
+    supports_hybrid = mode == QuantumBackendMode.HYBRID_RUNTIME
+    capabilities: list[str] = []
+    if mode in {
+        QuantumBackendMode.SIMULATOR_LOCAL,
+        QuantumBackendMode.SIMULATOR_NOISY,
+    }:
+        capabilities.append("simulation")
+    if supports_noise:
+        capabilities.append("noise-model")
+    if supports_hybrid:
+        capabilities.append("hybrid-runtime")
+    if mode == QuantumBackendMode.EXTERNAL_BACKEND:
+        capabilities.append("external-provider")
+
+    return QuantumBackendProfile(
+        mode=mode,
+        provider=provider,
+        backend_name=backend_name_map[mode],
+        supports_noise=supports_noise,
+        supports_hybrid=supports_hybrid,
+        capabilities=capabilities,
+    )
+
+
+def build_baseline_execution_policy(
+    mode: QuantumBackendMode,
+) -> QuantumExecutionPolicy:
+    """Build the canonical execution policy for the baseline flow."""
+
+    execution_path = (
+        "simulate"
+        if mode in {
+            QuantumBackendMode.SIMULATOR_LOCAL,
+            QuantumBackendMode.SIMULATOR_NOISY,
+        }
+        else "execute"
+    )
+    notes = [
+        "Baseline canonical quantum policy generated from backend mode.",
+    ]
+    if execution_path == "simulate":
+        notes.append("The baseline route prefers simulation-first execution.")
+    else:
+        notes.append("This route expects runtime execution outside the baseline simulator.")
+
+    return QuantumExecutionPolicy(
+        optimization_goal="balanced",
+        mitigation_strategy="baseline_mitigation",
+        execution_path=execution_path,
+        max_shots=1024,
+        allow_fallback=True,
+        notes=notes,
+    )
+
+
 def build_baseline_quantum_plan(mission: QuantumMission) -> QuantumExecutionPlan:
     """Create the baseline execution plan for the canonical quantum flow."""
 
@@ -212,24 +191,42 @@ def build_baseline_quantum_plan(mission: QuantumMission) -> QuantumExecutionPlan
         if stage.candidate_modules:
             target_modules.append(stage.candidate_modules[0])
 
+    backend = build_baseline_backend_profile(mission.preferred_backend_mode)
+    policy = build_baseline_execution_policy(mission.preferred_backend_mode)
+
     return QuantumExecutionPlan(
         mission_id=mission.mission_id,
         backend_mode=mission.preferred_backend_mode,
+        backend=backend,
+        policy=policy,
         selected_services=selected_services,
         target_modules=target_modules,
-        optimization_goal="balanced",
-        mitigation_strategy="baseline_mitigation",
-        execution_path=(
-            "simulate"
-            if mission.preferred_backend_mode
-            in {
-                QuantumBackendMode.SIMULATOR_LOCAL,
-                QuantumBackendMode.SIMULATOR_NOISY,
-            }
-            else "execute"
-        ),
         notes=[
             "Baseline canonical quantum pipeline generated from mission contract.",
             "Mission and planning stages remain conceptual but now have stable interfaces.",
+            "Canonical backend and policy entities are attached to the plan.",
         ],
+    )
+
+
+def build_baseline_quantum_job(
+    mission: QuantumMission,
+    plan: QuantumExecutionPlan,
+    stage: QuantumPipelineStage = QuantumPipelineStage.EXECUTION,
+) -> QuantumJob:
+    """Create a canonical job record for the baseline flow."""
+
+    return QuantumJob(
+        mission_id=mission.mission_id,
+        stage=stage,
+        status=(
+            QuantumJobStatus.PLANNED
+            if stage != QuantumPipelineStage.EXECUTION
+            else QuantumJobStatus.READY
+        ),
+        backend_id=plan.backend.backend_id,
+        metadata={
+            "execution_path": plan.execution_path,
+            "backend_name": plan.backend.backend_name,
+        },
     )

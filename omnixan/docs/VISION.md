@@ -55,7 +55,7 @@ El desarrollo detallado de estos principios quedó aterrizado en
 6. Reportar resultado, estado del servicio y métricas.
 
 La definición canónica y los contratos mínimos de esta cadena viven ahora en
-`QUANTUM_PIPELINE.md` y `omnixan.quantum_pipeline`.
+`QUANTUM_PIPELINE.md`, `omnixan.quantum_pipeline` y `omnixan.data_model`.
 
 ## Servicios Amarr iniciales
 

@@ -60,6 +60,11 @@ try:
 except ImportError:
     pass
 
+try:
+    from . import data_model
+except ImportError:
+    pass
+
 __all__ = [
     "carbon_based_quantum_cloud",
     "supercomputing_interconnect_cloud",
@@ -68,4 +73,5 @@ __all__ = [
     "heterogenous_computing_group",
     "virtualized_cluster",
     "quantum_cloud_architecture",
+    "data_model",
 ]
