@@ -10,7 +10,8 @@ campaña diaria que guía esa transición vive en `DAILY_TASKS.md`. Los principi
 que traducen la narrativa Amarr a decisiones de arquitectura y operación están
 en `AMARR_PRINCIPLES.md`. El lenguaje oficial y el catálogo inicial de
 servicios viven en `SERVICE_LANGUAGE.md`. La decisión actual bloque por bloque
-respecto del canon del producto quedó en `BLOCK_CANON_MAP.md`.
+respecto del canon del producto quedó en `BLOCK_CANON_MAP.md`. La clasificación
+operativa módulo por módulo vive en `MODULE_CLASSIFICATION.md`.
 
 ## Bloques principales
 

@@ -36,6 +36,9 @@ def test_release_artifacts_exist() -> None:
     amarr_principles = REPO_ROOT / "omnixan" / "docs" / "AMARR_PRINCIPLES.md"
     service_language = REPO_ROOT / "omnixan" / "docs" / "SERVICE_LANGUAGE.md"
     block_canon_map = REPO_ROOT / "omnixan" / "docs" / "BLOCK_CANON_MAP.md"
+    module_classification = (
+        REPO_ROOT / "omnixan" / "docs" / "MODULE_CLASSIFICATION.md"
+    )
 
     assert changelog.exists()
     assert "0.2.0 - 2026-04-01" in changelog.read_text(encoding="utf-8")
@@ -65,6 +68,11 @@ def test_release_artifacts_exist() -> None:
     block_map_text = block_canon_map.read_text(encoding="utf-8")
     assert "`quantum_cloud_architecture`" in block_map_text
     assert "`carbon_based_quantum_cloud`" in block_map_text
+    assert module_classification.exists()
+    module_text = module_classification.read_text(encoding="utf-8")
+    assert "## Criterios de clasificación" in module_text
+    assert "`load_balancing_module`" in module_text
+    assert "`cold_migration_module`" in module_text
 
 
 def test_hardened_modules_do_not_configure_global_logging_on_import() -> None:

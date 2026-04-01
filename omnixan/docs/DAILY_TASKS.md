@@ -128,6 +128,7 @@ se usa como documento operativo para llevar OMNIXAN desde "repo verificable" a
 - Validación: al menos un criterio claro por categoria.
 - Criterio de cierre: cualquier persona nueva puede distinguir que se puede usar
   hoy y que no.
+- Estado: completado en `MODULE_CLASSIFICATION.md`.
 
 ### Día 16: Cadena cuántica canónica
 

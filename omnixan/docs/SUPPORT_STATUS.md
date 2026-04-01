@@ -29,3 +29,8 @@
 - Para CI y desarrollo diario: usar el baseline soportado.
 - Para exploracion cuantica o distribuida: instalar extras tematicos y ejecutar las smoke suites opcionales.
 - Para GPU y runtimes Edge AI: tratar el soporte actual como opt-in por entorno.
+
+## Clasificación operativa
+
+La clasificación módulo por módulo que distingue `core`, `experimental`,
+`historical` y `placeholder` quedó documentada en `MODULE_CLASSIFICATION.md`.
