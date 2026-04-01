@@ -22,6 +22,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 from pydantic import BaseModel, Field
 
+from omnixan.api_contract import APIResponse, error_response, require_operation, success_response
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -377,12 +379,12 @@ class NonBlockingModule:
             self._logger.error(f"Initialization failed: {str(e)}")
             raise NonBlockingError(f"Failed to initialize module: {str(e)}")
     
-    async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, params: Dict[str, Any]) -> APIResponse:
         """Execute non-blocking operation"""
         if not self._initialized:
             raise NonBlockingError("Module not initialized")
         
-        operation = params.get("operation")
+        operation = require_operation(params)
         
         if operation == "submit":
             op_type = OperationType(params.get("op_type", "compute"))
@@ -390,7 +392,10 @@ class NonBlockingModule:
             priority = params.get("priority", 0)
             
             op = await self.submit(op_type, data, priority)
-            return {"op_id": op.op_id, "status": op.status.value}
+            return success_response(
+                operation,
+                {"op_id": op.op_id, "op_status": op.status.value},
+            )
         
         elif operation == "submit_batch":
             ops = params.get("operations", [])
@@ -398,56 +403,82 @@ class NonBlockingModule:
                 (OperationType(o.get("op_type", "compute")), o.get("data"), o.get("priority", 0))
                 for o in ops
             ])
-            return {
-                "op_ids": [op.op_id for op in results],
-                "count": len(results)
-            }
+            return success_response(
+                operation,
+                {
+                    "op_ids": [op.op_id for op in results],
+                    "count": len(results),
+                },
+            )
         
         elif operation == "poll":
             op_id = params["op_id"]
             status = await self.poll(op_id)
             if status:
-                return {
-                    "op_id": op_id,
-                    "status": status.status.value,
-                    "result": status.result
-                }
-            return {"error": "Operation not found"}
+                return success_response(
+                    operation,
+                    {
+                        "op_id": op_id,
+                        "op_status": status.status.value,
+                        "result": status.result,
+                    },
+                )
+            return error_response(operation, "Operation not found", {"op_id": op_id})
         
         elif operation == "wait":
             op_id = params["op_id"]
             timeout = params.get("timeout")
             result = await self.wait(op_id, timeout)
-            return {
-                "op_id": op_id,
-                "status": result.status.value if result else "timeout",
-                "result": result.result if result else None
-            }
+            return success_response(
+                operation,
+                {
+                    "op_id": op_id,
+                    "op_status": result.status.value if result else "timeout",
+                    "result": result.result if result else None,
+                },
+            )
         
         elif operation == "cancel":
             op_id = params["op_id"]
             success = await self.cancel(op_id)
-            return {"success": success}
+            return success_response(operation, {"success": success, "op_id": op_id})
         
         elif operation == "poll_completions":
             max_events = params.get("max_events", 10)
             events = self.completion_queue.poll_completions(max_events)
-            return {
-                "events": [
-                    {
-                        "event_id": e.event_id,
-                        "op_id": e.op_id,
-                        "status": e.status.value
-                    }
-                    for e in events
-                ]
-            }
+            return success_response(
+                operation,
+                {
+                    "events": [
+                        {
+                            "event_id": e.event_id,
+                            "op_id": e.op_id,
+                            "op_status": e.status.value,
+                        }
+                        for e in events
+                    ]
+                },
+            )
         
         elif operation == "get_metrics":
-            return self.get_metrics()
+            return success_response(operation, self.get_metrics())
+
+        elif operation == "get_status":
+            return success_response(operation, self.get_status())
         
         else:
             raise ValueError(f"Unknown operation: {operation}")
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get a lightweight module status snapshot."""
+        return {
+            "initialized": self._initialized,
+            "shutting_down": self._shutting_down,
+            "pending_operations": self.metrics.pending_operations,
+            "registered_operations": len(self.operations),
+            "worker_threads": self.config.worker_threads,
+            "queue_depth": self.op_queue.qsize(),
+        }
     
     async def submit(
         self,
@@ -712,4 +743,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

@@ -21,6 +21,13 @@ import json
 
 from pydantic import BaseModel, Field
 
+from omnixan.api_contract import (
+    APIResponse,
+    error_response,
+    require_operation,
+    success_response,
+)
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -650,46 +657,62 @@ class CacheCoherenceModule:
             self._logger.error(f"Initialization failed: {str(e)}")
             raise CacheCoherenceError(f"Failed to initialize module: {str(e)}")
     
-    async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, params: Dict[str, Any]) -> APIResponse:
         """Execute cache coherence operation"""
         if not self._initialized:
             raise CacheCoherenceError("Module not initialized")
         
-        operation = params.get("operation")
+        operation = require_operation(params)
         
         if operation == "register_node":
             node_id = params.get("node_id", str(uuid4()))
             self.register_node(node_id)
-            return {"node_id": node_id}
+            return success_response(operation, {"node_id": node_id})
         
         elif operation == "read":
             node_id = params.get("node_id")
             key = params.get("key")
             value, hit = await self.read(node_id, key)
-            return {"value": value, "hit": hit}
+            return success_response(operation, {"value": value, "hit": hit})
         
         elif operation == "write":
             node_id = params.get("node_id")
             key = params.get("key")
             value = params.get("value")
             await self.write(node_id, key, value)
-            return {"success": True}
+            return success_response(operation, {"success": True})
         
         elif operation == "invalidate":
             key = params.get("key")
             await self.invalidate_all(key)
-            return {"success": True}
+            return success_response(operation, {"success": True})
         
         elif operation == "get_metrics":
             node_id = params.get("node_id")
             metrics = self.get_metrics(node_id)
-            return metrics
+            if "error" in metrics:
+                return error_response(operation, metrics["error"], metrics)
+            return success_response(operation, metrics)
         
         elif operation == "get_directory":
-            return self.get_directory_state()
+            return success_response(operation, self.get_directory_state())
+
+        elif operation == "get_status":
+            return success_response(operation, self.get_status())
         
         else:
             raise ValueError(f"Unknown operation: {operation}")
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get a lightweight module status snapshot."""
+        return {
+            "initialized": self._initialized,
+            "shutting_down": self._shutting_down,
+            "node_count": len(self.nodes),
+            "protocol": self.config.protocol.value,
+            "directory_entries": len(self.directory),
+            "owners_tracked": len(self.directory_owner),
+        }
     
     def register_node(self, node_id: str) -> CacheNode:
         """Register a new cache node"""
@@ -972,4 +995,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

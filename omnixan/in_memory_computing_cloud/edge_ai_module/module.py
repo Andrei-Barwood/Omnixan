@@ -21,6 +21,8 @@ import numpy as np
 
 from pydantic import BaseModel, Field
 
+from omnixan.api_contract import APIResponse, error_response, require_operation, success_response
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -440,12 +442,12 @@ class EdgeAIModule:
             self._logger.error(f"Initialization failed: {str(e)}")
             raise EdgeAIError(f"Failed to initialize module: {str(e)}")
     
-    async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, params: Dict[str, Any]) -> APIResponse:
         """Execute Edge AI operation"""
         if not self._initialized:
             raise EdgeAIError("Module not initialized")
         
-        operation = params.get("operation")
+        operation = require_operation(params)
         
         if operation == "deploy_model":
             model_info = await self.deploy_model(
@@ -459,81 +461,104 @@ class EdgeAIModule:
                     params.get("quantization", "none")
                 )
             )
-            return {
-                "model_id": model_info.model_id,
-                "size_bytes": model_info.size_bytes
-            }
+            return success_response(
+                operation,
+                {
+                    "model_id": model_info.model_id,
+                    "size_bytes": model_info.size_bytes,
+                },
+            )
         
         elif operation == "unload_model":
             success = await self.unload_model(params["model_id"])
-            return {"success": success}
+            return success_response(
+                operation,
+                {"success": success, "model_id": params["model_id"]},
+            )
         
         elif operation == "infer":
             model_id = params["model_id"]
             input_data = np.array(params["input"])
             result = await self.infer(model_id, input_data)
-            return {
-                "success": result.success,
-                "output": result.output.tolist() if result.output is not None else None,
-                "inference_time_ms": result.inference_time_ms,
-                "error": result.error
-            }
+            return success_response(
+                operation,
+                {
+                    "success": result.success,
+                    "output": result.output.tolist() if result.output is not None else None,
+                    "inference_time_ms": result.inference_time_ms,
+                    "error": result.error,
+                },
+            )
         
         elif operation == "batch_infer":
             model_id = params["model_id"]
             batch = [np.array(x) for x in params["batch"]]
             results = await self.batch_infer(model_id, batch)
-            return {
-                "results": [
-                    {
-                        "success": r.success,
-                        "output": r.output.tolist() if r.output is not None else None,
-                        "inference_time_ms": r.inference_time_ms
-                    }
-                    for r in results
-                ]
-            }
+            return success_response(
+                operation,
+                {
+                    "results": [
+                        {
+                            "success": r.success,
+                            "output": r.output.tolist() if r.output is not None else None,
+                            "inference_time_ms": r.inference_time_ms,
+                        }
+                        for r in results
+                    ]
+                },
+            )
         
         elif operation == "optimize_model":
             model_id = params["model_id"]
             quantization = QuantizationType(params.get("quantization", "int8"))
             result = await self.optimize_model(model_id, quantization)
-            return result
+            if "error" in result:
+                return error_response(operation, result["error"], result)
+            return success_response(operation, result)
         
         elif operation == "get_model_info":
             model_id = params["model_id"]
             info = self.get_model_info(model_id)
             if info:
-                return {
-                    "model_id": info.model_id,
-                    "name": info.name,
-                    "version": info.version,
-                    "format": info.format.value,
-                    "loaded": info.loaded,
-                    "size_bytes": info.size_bytes,
-                    "avg_inference_time_ms": info.avg_inference_time_ms,
-                    "total_inferences": info.total_inferences
-                }
-            return {"error": "Model not found"}
+                return success_response(
+                    operation,
+                    {
+                        "model_id": info.model_id,
+                        "name": info.name,
+                        "version": info.version,
+                        "format": info.format.value,
+                        "loaded": info.loaded,
+                        "size_bytes": info.size_bytes,
+                        "avg_inference_time_ms": info.avg_inference_time_ms,
+                        "total_inferences": info.total_inferences,
+                    },
+                )
+            return error_response(operation, "Model not found", {"model_id": model_id})
         
         elif operation == "list_models":
-            return {
-                "models": [
-                    {
-                        "model_id": m.model_id,
-                        "name": m.name,
-                        "loaded": m.loaded,
-                        "inferences": m.total_inferences
-                    }
-                    for m in self.models.values()
-                ]
-            }
+            return success_response(
+                operation,
+                {
+                    "models": [
+                        {
+                            "model_id": m.model_id,
+                            "name": m.name,
+                            "loaded": m.loaded,
+                            "inferences": m.total_inferences,
+                        }
+                        for m in self.models.values()
+                    ]
+                },
+            )
         
         elif operation == "get_metrics":
-            return self.get_metrics()
+            return success_response(operation, self.get_metrics())
 
         elif operation == "get_runtime_status":
-            return self.get_runtime_status()
+            return success_response(operation, self.get_runtime_status())
+
+        elif operation == "get_status":
+            return success_response(operation, self.get_status())
         
         else:
             raise ValueError(f"Unknown operation: {operation}")
@@ -823,6 +848,17 @@ class EdgeAIModule:
             "avg_latency_ms": round(self.metrics.avg_latency_ms, 2),
             "throughput_per_sec": round(self.metrics.throughput_per_sec, 2),
             "memory_usage_mb": round(self.metrics.memory_usage_mb, 2)
+        }
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get a lightweight module status snapshot."""
+        return {
+            "initialized": self._initialized,
+            "shutting_down": self._shutting_down,
+            "models_loaded": sum(1 for model in self.models.values() if model.loaded),
+            "total_models": len(self.models),
+            "default_accelerator": self.config.default_accelerator.value,
+            "runtime_status": self.get_runtime_status(),
         }
     
     async def shutdown(self) -> None:

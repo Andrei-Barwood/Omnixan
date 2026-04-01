@@ -19,6 +19,7 @@
 - Los `main()` incrustados dentro de muchos `module.py` quedaron tratados como demos locales, no como comandos oficiales.
 - Se añadió una smoke suite core para cubrir import, inicialización y una operación simple en los seis bloques principales no cuánticos.
 - Se auditó el manejo de backends pesados para que CUDA y formatos Edge AI opcionales fallen con mensajes claros en runtime y no al importar módulos.
+- Se empezó a unificar la API pública de módulos core con envelope estándar en `execute()` y métodos comunes `get_status()` y `get_metrics()`.
 
 ## Validación distribuida profunda ejecutada
 

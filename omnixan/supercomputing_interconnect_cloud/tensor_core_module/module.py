@@ -20,6 +20,8 @@ import numpy as np
 
 from pydantic import BaseModel, Field
 
+from omnixan.api_contract import APIResponse, require_operation, success_response
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -412,12 +414,12 @@ class TensorCoreModule:
             self._logger.error(f"Initialization failed: {str(e)}")
             raise TensorCoreError(f"Failed to initialize module: {str(e)}")
     
-    async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, params: Dict[str, Any]) -> APIResponse:
         """Execute tensor core operation"""
         if not self._initialized:
             raise TensorCoreError("Module not initialized")
         
-        operation = params.get("operation")
+        operation = require_operation(params)
         
         if operation == "gemm":
             A = np.array(params["A"])
@@ -437,32 +439,53 @@ class TensorCoreModule:
             inputs = [A, B] if C is None else [A, B, C]
             result = await self.gemm(inputs, config)
             
-            return {"result": result.tolist(), "shape": list(result.shape)}
+            return success_response(
+                operation,
+                {"result": result.tolist(), "shape": list(result.shape)},
+            )
         
         elif operation == "batch_gemm":
             A = np.array(params["A"])
             B = np.array(params["B"])
             result = await self.batch_gemm(A, B)
-            return {"result": result.tolist(), "shape": list(result.shape)}
+            return success_response(
+                operation,
+                {"result": result.tolist(), "shape": list(result.shape)},
+            )
         
         elif operation == "attention":
             Q = np.array(params["Q"])
             K = np.array(params["K"])
             V = np.array(params["V"])
             result = await self.attention(Q, K, V)
-            return {"result": result.tolist(), "shape": list(result.shape)}
+            return success_response(
+                operation,
+                {"result": result.tolist(), "shape": list(result.shape)},
+            )
         
         elif operation == "softmax":
             x = np.array(params["input"])
             axis = params.get("axis", -1)
             result = await self.softmax(x, axis)
-            return {"result": result.tolist()}
+            return success_response(operation, {"result": result.tolist()})
         
         elif operation == "get_metrics":
-            return self.get_metrics()
+            return success_response(operation, self.get_metrics())
+
+        elif operation == "get_status":
+            return success_response(operation, self.get_status())
         
         else:
             raise ValueError(f"Unknown operation: {operation}")
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get a lightweight module status snapshot."""
+        return {
+            "initialized": self._initialized,
+            "registered_operations": len(self.operations),
+            "default_precision": self.config.default_precision.value,
+            "tensor_cores_enabled": self.config.enable_tensor_cores,
+        }
     
     async def gemm(
         self,
@@ -653,4 +676,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

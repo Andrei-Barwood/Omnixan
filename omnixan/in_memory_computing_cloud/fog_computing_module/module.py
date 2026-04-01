@@ -23,6 +23,8 @@ import numpy as np
 
 from pydantic import BaseModel, Field
 
+from omnixan.api_contract import APIResponse, error_response, require_operation, success_response
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -487,12 +489,12 @@ class FogComputingModule:
             self._logger.error(f"Initialization failed: {str(e)}")
             raise FogError(f"Failed to initialize module: {str(e)}")
     
-    async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, params: Dict[str, Any]) -> APIResponse:
         """Execute fog computing operation"""
         if not self._initialized:
             raise FogError("Module not initialized")
         
-        operation = params.get("operation")
+        operation = require_operation(params)
         
         if operation == "register_node":
             node = await self.register_node(
@@ -504,11 +506,11 @@ class FogComputingModule:
                 bandwidth_mbps=params.get("bandwidth_mbps", 100),
                 latency_ms=params.get("latency_ms", 10)
             )
-            return {"node_id": node.node_id}
+            return success_response(operation, {"node_id": node.node_id})
         
         elif operation == "unregister_node":
             success = await self.unregister_node(params["node_id"])
-            return {"success": success}
+            return success_response(operation, {"success": success, "node_id": params["node_id"]})
         
         elif operation == "submit_task":
             task = await self.submit_task(
@@ -519,36 +521,59 @@ class FogComputingModule:
                 data_size_kb=params.get("data_size_kb", 100),
                 deadline_ms=params.get("deadline_ms")
             )
-            return {"task_id": task.task_id, "status": task.status.value}
+            return success_response(
+                operation,
+                {"task_id": task.task_id, "task_status": task.status.value},
+            )
         
         elif operation == "get_task_status":
             status = self.get_task_status(params["task_id"])
-            return status or {"error": "Task not found"}
+            if status:
+                return success_response(operation, status)
+            return error_response(operation, "Task not found", {"task_id": params["task_id"]})
         
         elif operation == "cancel_task":
             success = await self.cancel_task(params["task_id"])
-            return {"success": success}
+            return success_response(operation, {"success": success, "task_id": params["task_id"]})
         
         elif operation == "get_metrics":
-            return self.get_metrics()
+            return success_response(operation, self.get_metrics())
+
+        elif operation == "get_status":
+            return success_response(operation, self.get_status())
         
         elif operation == "list_nodes":
-            return {
-                "nodes": [
-                    {
-                        "node_id": n.node_id,
-                        "name": n.name,
-                        "type": n.node_type.value,
-                        "is_online": n.is_online,
-                        "cpu_available": n.available_cpu,
-                        "memory_available": n.available_memory
-                    }
-                    for n in self.nodes.values()
-                ]
-            }
+            return success_response(
+                operation,
+                {
+                    "nodes": [
+                        {
+                            "node_id": n.node_id,
+                            "name": n.name,
+                            "type": n.node_type.value,
+                            "is_online": n.is_online,
+                            "cpu_available": n.available_cpu,
+                            "memory_available": n.available_memory,
+                        }
+                        for n in self.nodes.values()
+                    ]
+                },
+            )
         
         else:
             raise ValueError(f"Unknown operation: {operation}")
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get a lightweight module status snapshot."""
+        return {
+            "initialized": self._initialized,
+            "shutting_down": self._shutting_down,
+            "node_count": len(self.nodes),
+            "online_nodes": sum(1 for node in self.nodes.values() if node.is_online),
+            "queued_tasks": len(self.scheduler.task_queue),
+            "running_tasks": len(self.scheduler.running_tasks),
+            "cloud_fallback_enabled": self.config.cloud_fallback,
+        }
     
     async def register_node(
         self,
@@ -871,4 +896,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

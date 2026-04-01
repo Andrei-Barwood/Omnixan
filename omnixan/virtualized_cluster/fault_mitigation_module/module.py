@@ -21,6 +21,8 @@ import numpy as np
 
 from pydantic import BaseModel, Field
 
+from omnixan.api_contract import APIResponse, require_operation, success_response
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -255,54 +257,54 @@ class FaultMitigationModule:
             self._logger.error(f"Initialization failed: {str(e)}")
             raise FaultError(f"Failed to initialize module: {str(e)}")
     
-    async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, params: Dict[str, Any]) -> APIResponse:
         """Execute fault mitigation operation"""
         if not self._initialized:
             raise FaultError("Module not initialized")
         
-        operation = params.get("operation")
+        operation = require_operation(params)
         
         if operation == "register_component":
             name = params["name"]
             redundancy = RedundancyLevel(params.get("redundancy", "triple"))
             component = await self.register_component(name, redundancy)
-            return {"component_id": component.component_id}
+            return success_response(operation, {"component_id": component.component_id})
         
         elif operation == "report_fault":
             component_id = params["component_id"]
             fault_type = FaultType(params.get("fault_type", "transient"))
             description = params.get("description", "Unknown fault")
             fault = await self.report_fault(component_id, fault_type, description)
-            return {"fault_id": fault.fault_id}
+            return success_response(operation, {"fault_id": fault.fault_id})
         
         elif operation == "heartbeat":
             component_id = params["component_id"]
             await self.heartbeat(component_id)
-            return {"success": True}
+            return success_response(operation, {"success": True, "component_id": component_id})
         
         elif operation == "checkpoint":
             component_id = params["component_id"]
             state = params.get("state", {})
             cp = await self.create_checkpoint(component_id, state)
-            return {"checkpoint_id": cp.checkpoint_id}
+            return success_response(operation, {"checkpoint_id": cp.checkpoint_id})
         
         elif operation == "restore":
             component_id = params["component_id"]
             checkpoint_id = params.get("checkpoint_id")
             state = await self.restore_checkpoint(component_id, checkpoint_id)
-            return {"state": state}
+            return success_response(operation, {"state": state})
         
         elif operation == "recover":
             component_id = params["component_id"]
             strategy = RecoveryStrategy(params.get("strategy", "restart"))
             success = await self.recover_component(component_id, strategy)
-            return {"success": success}
+            return success_response(operation, {"success": success, "component_id": component_id})
         
         elif operation == "get_status":
-            return self.get_status()
+            return success_response(operation, self.get_status())
         
         elif operation == "get_metrics":
-            return self.get_metrics()
+            return success_response(operation, self.get_metrics())
         
         else:
             raise ValueError(f"Unknown operation: {operation}")
@@ -591,6 +593,8 @@ class FaultMitigationModule:
     def get_status(self) -> Dict[str, Any]:
         """Get fault mitigation status"""
         return {
+            "initialized": self._initialized,
+            "shutting_down": self._shutting_down,
             "components": [
                 {
                     "component_id": c.component_id,
@@ -708,4 +712,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

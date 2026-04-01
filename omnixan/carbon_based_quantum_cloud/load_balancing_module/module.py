@@ -20,6 +20,8 @@ from uuid import uuid4, UUID
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 from pydantic.types import PositiveInt, PositiveFloat, NonNegativeFloat
 
+from omnixan.api_contract import APIResponse, require_operation, success_response
+
 
 # ==================== Type Definitions ====================
 
@@ -616,39 +618,96 @@ class LoadBalancingModule:
             self.logger.error(f"Failed to initialize module: {e}")
             raise
 
-    async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, params: Dict[str, Any]) -> APIResponse:
         """Execute load balancing operation"""
         if not self._initialized:
             raise LoadBalancingError("Module not initialized")
 
-        operation = params.get("operation")
+        operation = require_operation(params)
 
         if operation == "route_request":
             request = Request(**params.get("request", {}))
             result = await self.route_request(request)
-            return {"status": "success", "result": result.model_dump()}
+            return success_response(
+                operation,
+                {"result": result.model_dump()},
+            )
 
         elif operation == "add_backend":
             backend_config = BackendConfig(**params.get("backend_config", {}))
             backend_id = await self.add_backend(backend_config)
-            return {"status": "success", "backend_id": backend_id}
+            return success_response(operation, {"backend_id": backend_id})
 
         elif operation == "remove_backend":
             backend_id = params.get("backend_id")
             await self.remove_backend(backend_id)
-            return {"status": "success"}
+            return success_response(operation)
 
         elif operation == "get_load_distribution":
             distribution = await self.get_load_distribution()
-            return {"status": "success", "distribution": distribution.model_dump()}
+            return success_response(
+                operation,
+                {"distribution": distribution.model_dump()},
+            )
 
         elif operation == "health_check":
             backend_id = params.get("backend_id")
             health = await self.health_check(backend_id)
-            return {"status": "success", "health": health.model_dump()}
+            return success_response(operation, {"health": health.model_dump()})
+
+        elif operation == "get_status":
+            return success_response(operation, self.get_status())
+
+        elif operation == "get_metrics":
+            return success_response(operation, self.get_metrics())
 
         else:
             raise ValueError(f"Unknown operation: {operation}")
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get a lightweight module status snapshot."""
+        healthy_backends = sum(
+            1
+            for backend in self.backends.values()
+            if backend.health_status.status == HealthStatusEnum.HEALTHY
+        )
+        return {
+            "initialized": self._initialized,
+            "shutting_down": self._shutting_down,
+            "backend_count": len(self.backends),
+            "healthy_backends": healthy_backends,
+            "algorithm": self.config.algorithm.algorithm_type.value,
+            "session_affinity_enabled": self.config.session_affinity,
+        }
+
+    def get_metrics(self) -> Dict[str, Any]:
+        """Get aggregated request and backend metrics."""
+        total_requests = 0
+        successful_requests = 0
+        failed_requests = 0
+        total_latency_ms = 0.0
+        active_connections = 0
+
+        for backend in self.backends.values():
+            metrics = backend.metrics
+            total_requests += metrics.total_requests
+            successful_requests += metrics.successful_requests
+            failed_requests += metrics.failed_requests
+            total_latency_ms += metrics.total_latency_ms
+            active_connections += metrics.active_connections
+
+        avg_latency_ms = 0.0
+        if successful_requests > 0:
+            avg_latency_ms = total_latency_ms / successful_requests
+
+        return {
+            "backend_count": len(self.backends),
+            "total_requests": total_requests,
+            "successful_requests": successful_requests,
+            "failed_requests": failed_requests,
+            "active_connections": active_connections,
+            "avg_latency_ms": round(avg_latency_ms, 3),
+        }
 
     async def shutdown(self) -> None:
         """Shutdown the load balancing module"""

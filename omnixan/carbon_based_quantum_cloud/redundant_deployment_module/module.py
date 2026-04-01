@@ -16,7 +16,7 @@ import asyncio
 import hashlib
 import logging
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 from uuid import uuid4
@@ -24,10 +24,17 @@ from uuid import uuid4
 from pydantic import BaseModel, Field, field_validator, ConfigDict
 from pydantic.types import conint, confloat
 
+from omnixan.api_contract import APIResponse, require_operation, success_response
+
 
 # ============================================================================
 # Configuration Models (Pydantic v2)
 # ============================================================================
+
+
+def utc_now() -> datetime:
+    """Return a timezone-aware UTC timestamp."""
+    return datetime.now(UTC)
 
 class DeploymentMode(str, Enum):
     """Deployment configuration modes"""
@@ -105,7 +112,7 @@ class DeploymentResult(BaseModel):
     deployment_id: str = Field(default_factory=lambda: str(uuid4()))
     regions_deployed: List[str]
     regions_failed: List[str] = Field(default_factory=list)
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=utc_now)
     message: str = ""
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
@@ -119,7 +126,7 @@ class SyncResult(BaseModel):
     sync_id: str = Field(default_factory=lambda: str(uuid4()))
     records_synced: int = 0
     lag_seconds: float = 0.0
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=utc_now)
     errors: List[str] = Field(default_factory=list)
 
 
@@ -133,7 +140,7 @@ class FailoverResult(BaseModel):
     source_region: str
     target_region: str
     failover_duration_ms: float
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=utc_now)
     message: str = ""
 
 
@@ -151,7 +158,7 @@ class RedundancyStatus(BaseModel):
     replication_lag_seconds: Dict[str, float] = Field(default_factory=dict)
     last_failover: Optional[datetime] = None
     overall_health: HealthStatus
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=utc_now)
 
 
 # ============================================================================
@@ -249,7 +256,7 @@ class RedundantDeploymentModule:
     def _audit_log_event(self, event_type: str, details: Dict[str, Any]) -> None:
         """Record audit log event"""
         audit_entry = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": utc_now().isoformat(),
             "event_type": event_type,
             "details": details
         }
@@ -275,7 +282,7 @@ class RedundantDeploymentModule:
         
         self.logger.info("RedundantDeploymentModule initialized successfully")
     
-    async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, params: Dict[str, Any]) -> APIResponse:
         """
         Execute a generic operation based on parameters.
         
@@ -285,10 +292,7 @@ class RedundantDeploymentModule:
         Returns:
             Operation result dictionary
         """
-        operation = params.get("operation")
-        
-        if not operation:
-            raise ValueError("No operation specified in params")
+        operation = require_operation(params)
         
         self.logger.info(f"Executing operation: {operation}")
         
@@ -296,7 +300,9 @@ class RedundantDeploymentModule:
             "deploy": self._execute_deploy,
             "sync": self._execute_sync,
             "failover": self._execute_failover,
-            "status": self._execute_status
+            "status": self._execute_status,
+            "get_status": self._execute_module_status,
+            "get_metrics": self._execute_metrics,
         }
         
         handler = operations.get(operation)
@@ -311,7 +317,9 @@ class RedundantDeploymentModule:
             "result_success": result.get("success", False)
         })
         
-        return result
+        if isinstance(result, dict):
+            return success_response(operation, result)
+        return success_response(operation, {"result": result})
     
     async def _execute_deploy(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Execute deployment operation"""
@@ -339,6 +347,51 @@ class RedundantDeploymentModule:
         service_id = params.get("service_id")
         status = await self.get_redundancy_status(service_id)
         return status.model_dump()
+
+    async def _execute_module_status(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute global module status check."""
+        return self.get_status()
+
+    async def _execute_metrics(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute metrics check."""
+        return self.get_metrics()
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get a global module status snapshot."""
+        healthy_region_records = 0
+        degraded_region_records = 0
+        unhealthy_region_records = 0
+
+        for region_map in self._region_health.values():
+            for health in region_map.values():
+                if health == HealthStatus.HEALTHY:
+                    healthy_region_records += 1
+                elif health == HealthStatus.DEGRADED:
+                    degraded_region_records += 1
+                elif health == HealthStatus.UNHEALTHY:
+                    unhealthy_region_records += 1
+
+        return {
+            "initialized": self._running,
+            "services_managed": len(self._services),
+            "deployments_recorded": len(self._deployments),
+            "active_services": len(self._active_regions),
+            "health_check_tasks": len(self._health_check_tasks),
+            "replication_tasks": len(self._replication_tasks),
+            "healthy_region_records": healthy_region_records,
+            "degraded_region_records": degraded_region_records,
+            "unhealthy_region_records": unhealthy_region_records,
+        }
+
+    def get_metrics(self) -> Dict[str, Any]:
+        """Get aggregate module metrics."""
+        return {
+            "services_managed": len(self._services),
+            "deployments_recorded": len(self._deployments),
+            "replication_configs": len(self._replication_configs),
+            "failover_events": len(self._failover_history),
+            "audit_log_entries": len(self._audit_log),
+        }
     
     async def shutdown(self) -> None:
         """
@@ -750,7 +803,7 @@ class RedundantDeploymentModule:
         return {
             "service_id": service_id,
             "region_id": region_id,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": utc_now().isoformat(),
             "data": {}
         }
     
@@ -872,7 +925,7 @@ class RedundantDeploymentModule:
         Raises:
             FailoverError: If failover fails
         """
-        start_time = datetime.utcnow()
+        start_time = utc_now()
         self.logger.info(
             f"Starting failover for {service_id} to region {target_region}"
         )
@@ -924,7 +977,7 @@ class RedundantDeploymentModule:
                 raise FailoverError("Failover verification failed")
             
             # Calculate duration
-            duration_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+            duration_ms = (utc_now() - start_time).total_seconds() * 1000
             
             failover_result = FailoverResult(
                 success=True,
