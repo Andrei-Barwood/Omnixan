@@ -40,6 +40,10 @@ def test_release_artifacts_exist() -> None:
         REPO_ROOT / "omnixan" / "docs" / "MODULE_CLASSIFICATION.md"
     )
     quantum_pipeline = REPO_ROOT / "omnixan" / "docs" / "QUANTUM_PIPELINE.md"
+    quantum_gap_audit = REPO_ROOT / "omnixan" / "docs" / "QUANTUM_GAP_AUDIT.md"
+    quantum_block_readme = (
+        REPO_ROOT / "omnixan" / "quantum_cloud_architecture" / "README.md"
+    )
 
     assert changelog.exists()
     assert "0.2.0 - 2026-04-01" in changelog.read_text(encoding="utf-8")
@@ -76,6 +80,14 @@ def test_release_artifacts_exist() -> None:
     assert "`cold_migration_module`" in module_text
     assert quantum_pipeline.exists()
     assert "## Flujo canónico" in quantum_pipeline.read_text(encoding="utf-8")
+    assert quantum_gap_audit.exists()
+    quantum_gap_text = quantum_gap_audit.read_text(encoding="utf-8")
+    assert "## Tabla de cobertura cuantica" in quantum_gap_text
+    assert "## Backlog cuantico priorizado" in quantum_gap_text
+    assert quantum_block_readme.exists()
+    block_readme_text = quantum_block_readme.read_text(encoding="utf-8")
+    assert "QUANTUM_GAP_AUDIT.md" in block_readme_text
+    assert "## Ruta feliz actual del bloque" in block_readme_text
 
 
 def test_hardened_modules_do_not_configure_global_logging_on_import() -> None:

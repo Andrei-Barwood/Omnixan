@@ -92,6 +92,7 @@ python -m omnixan redundant-deployment --smoke --json
 - [`omnixan/docs/INTERNAL_RELEASE_2026-04-01.md`](./omnixan/docs/INTERNAL_RELEASE_2026-04-01.md)
 - [`omnixan/docs/MODULE_CLASSIFICATION.md`](./omnixan/docs/MODULE_CLASSIFICATION.md)
 - [`omnixan/docs/PACKAGING.md`](./omnixan/docs/PACKAGING.md)
+- [`omnixan/docs/QUANTUM_GAP_AUDIT.md`](./omnixan/docs/QUANTUM_GAP_AUDIT.md)
 - [`omnixan/docs/QUANTUM_PIPELINE.md`](./omnixan/docs/QUANTUM_PIPELINE.md)
 - [`omnixan/docs/REPO_STATUS.md`](./omnixan/docs/REPO_STATUS.md)
 - [`omnixan/docs/SERVICE_LANGUAGE.md`](./omnixan/docs/SERVICE_LANGUAGE.md)

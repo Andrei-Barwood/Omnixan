@@ -13,7 +13,8 @@ servicios viven en `SERVICE_LANGUAGE.md`. La decisión actual bloque por bloque
 respecto del canon del producto quedó en `BLOCK_CANON_MAP.md`. La clasificación
 operativa módulo por módulo vive en `MODULE_CLASSIFICATION.md`. La cadena
 cuántica canónica y sus contratos mínimos viven en `QUANTUM_PIPELINE.md` y
-`omnixan.quantum_pipeline`.
+`omnixan.quantum_pipeline`. La auditoría de huecos cuánticos y el backlog
+priorizado de integración viven en `QUANTUM_GAP_AUDIT.md`.
 
 ## Bloques principales
 
