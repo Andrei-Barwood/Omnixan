@@ -35,6 +35,7 @@ def test_release_artifacts_exist() -> None:
     vision = REPO_ROOT / "omnixan" / "docs" / "VISION.md"
     amarr_principles = REPO_ROOT / "omnixan" / "docs" / "AMARR_PRINCIPLES.md"
     service_language = REPO_ROOT / "omnixan" / "docs" / "SERVICE_LANGUAGE.md"
+    service_map = REPO_ROOT / "omnixan" / "docs" / "SERVICE_MAP.md"
     block_canon_map = REPO_ROOT / "omnixan" / "docs" / "BLOCK_CANON_MAP.md"
     module_classification = (
         REPO_ROOT / "omnixan" / "docs" / "MODULE_CLASSIFICATION.md"
@@ -69,6 +70,11 @@ def test_release_artifacts_exist() -> None:
     assert "## Catálogo inicial de servicios Amarr" in service_language.read_text(
         encoding="utf-8"
     )
+    assert service_map.exists()
+    service_map_text = service_map.read_text(encoding="utf-8")
+    assert "## Mapa oficial" in service_map_text
+    assert "`mission-service`" in service_map_text
+    assert "`observation-service`" in service_map_text
     assert block_canon_map.exists()
     block_map_text = block_canon_map.read_text(encoding="utf-8")
     assert "`quantum_cloud_architecture`" in block_map_text

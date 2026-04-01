@@ -159,6 +159,8 @@ fuera del canon público.
 - Día 16 debe convertir estos servicios en una cadena cuántica oficial.
 - Día 18 debe derivar de aquí un service map con contratos más explícitos.
 
+La formalización operativa de ese paso vive ahora en `SERVICE_MAP.md`.
+
 ## Criterio de cierre del Día 13
 
 OMNIXAN debe poder nombrar sus servicios principales sin caer en ambigüedad,

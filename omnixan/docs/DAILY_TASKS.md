@@ -160,6 +160,7 @@ se usa como documento operativo para llevar OMNIXAN desde "repo verificable" a
 - Validación: cada servicio debe tener input, output, estado y dependencias.
 - Criterio de cierre: existe un service map que pueda usarse para arquitectura,
   CLI y documentacion.
+- Estado: completado en `SERVICE_MAP.md`.
 
 ### Día 19: Modelo de datos canónico
 

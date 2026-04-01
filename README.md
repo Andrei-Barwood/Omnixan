@@ -96,6 +96,7 @@ python -m omnixan redundant-deployment --smoke --json
 - [`omnixan/docs/QUANTUM_PIPELINE.md`](./omnixan/docs/QUANTUM_PIPELINE.md)
 - [`omnixan/docs/REPO_STATUS.md`](./omnixan/docs/REPO_STATUS.md)
 - [`omnixan/docs/SERVICE_LANGUAGE.md`](./omnixan/docs/SERVICE_LANGUAGE.md)
+- [`omnixan/docs/SERVICE_MAP.md`](./omnixan/docs/SERVICE_MAP.md)
 - [`omnixan/docs/SUPPORT_STATUS.md`](./omnixan/docs/SUPPORT_STATUS.md)
 - [`omnixan/docs/VISION.md`](./omnixan/docs/VISION.md)
 

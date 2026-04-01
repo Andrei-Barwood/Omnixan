@@ -14,7 +14,9 @@ respecto del canon del producto quedó en `BLOCK_CANON_MAP.md`. La clasificació
 operativa módulo por módulo vive en `MODULE_CLASSIFICATION.md`. La cadena
 cuántica canónica y sus contratos mínimos viven en `QUANTUM_PIPELINE.md` y
 `omnixan.quantum_pipeline`. La auditoría de huecos cuánticos y el backlog
-priorizado de integración viven en `QUANTUM_GAP_AUDIT.md`.
+priorizado de integración viven en `QUANTUM_GAP_AUDIT.md`. El mapa oficial de
+servicios con exposición pública y contratos de alto nivel vive en
+`SERVICE_MAP.md`.
 
 ## Bloques principales
 

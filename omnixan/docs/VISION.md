@@ -68,7 +68,8 @@ La definición canónica y los contratos mínimos de esta cadena viven ahora en
 - Servicio de Juicio y Observación: expone métricas, estado y degradación.
 
 El lenguaje formal y el primer catálogo de estos servicios quedaron definidos en
-`SERVICE_LANGUAGE.md`.
+`SERVICE_LANGUAGE.md`. El mapa oficial con clasificación nuclear, auxiliar e
+interna quedó fijado en `SERVICE_MAP.md`.
 
 ## Estado real al inicio de esta fase
 

@@ -20,6 +20,18 @@ repo desde la raíz:
 - `omnixan-load-balancing`
 - `omnixan-redundant-deployment`
 
+## Mapeo actual de servicios a CLI
+
+La política oficial de exposición pública quedó definida en `SERVICE_MAP.md`.
+Hoy la CLI soportada representa solo los servicios maduros del producto:
+
+- `observation-service` -> `python -m omnixan doctor`, `python -m omnixan validate`
+- `continuity-service` -> `python -m omnixan load-balancing`, `python -m omnixan redundant-deployment`
+
+Los servicios nucleares cuánticos siguen definidos a nivel de arquitectura, pero
+todavía no se exponen como comandos estables separados porque falta una misión
+cuántica canónica ejecutable de extremo a extremo.
+
 ## Qué quedó fuera de soporte oficial
 
 El repositorio todavía contiene decenas de bloques con `async def main()` o
