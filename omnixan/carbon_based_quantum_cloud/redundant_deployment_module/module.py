@@ -16,7 +16,7 @@ import asyncio
 import hashlib
 import logging
 from collections import defaultdict
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 from uuid import uuid4
@@ -34,7 +34,7 @@ from omnixan.api_contract import APIResponse, require_operation, success_respons
 
 def utc_now() -> datetime:
     """Return a timezone-aware UTC timestamp."""
-    return datetime.now(UTC)
+    return datetime.now(timezone.utc)
 
 class DeploymentMode(str, Enum):
     """Deployment configuration modes"""
