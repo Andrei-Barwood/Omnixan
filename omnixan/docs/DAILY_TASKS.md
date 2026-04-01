@@ -138,6 +138,7 @@ se usa como documento operativo para llevar OMNIXAN desde "repo verificable" a
 - Entregables: flujo canonico de extremo a extremo y sus interfaces minimas.
 - Validación: la pipeline debe poder contarse como historia y como arquitectura.
 - Criterio de cierre: existe un flujo cuantico oficial, aunque sea baseline.
+- Estado: completado en `QUANTUM_PIPELINE.md` y `omnixan.quantum_pipeline`.
 
 ### Día 17: Auditoría de huecos cuánticos
 

@@ -39,6 +39,7 @@ def test_release_artifacts_exist() -> None:
     module_classification = (
         REPO_ROOT / "omnixan" / "docs" / "MODULE_CLASSIFICATION.md"
     )
+    quantum_pipeline = REPO_ROOT / "omnixan" / "docs" / "QUANTUM_PIPELINE.md"
 
     assert changelog.exists()
     assert "0.2.0 - 2026-04-01" in changelog.read_text(encoding="utf-8")
@@ -73,6 +74,8 @@ def test_release_artifacts_exist() -> None:
     assert "## Criterios de clasificación" in module_text
     assert "`load_balancing_module`" in module_text
     assert "`cold_migration_module`" in module_text
+    assert quantum_pipeline.exists()
+    assert "## Flujo canónico" in quantum_pipeline.read_text(encoding="utf-8")
 
 
 def test_hardened_modules_do_not_configure_global_logging_on_import() -> None:

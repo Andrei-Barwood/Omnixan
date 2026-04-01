@@ -54,6 +54,9 @@ El desarrollo detallado de estos principios quedó aterrizado en
 5. Simular, corregir o ejecutar según el entorno disponible.
 6. Reportar resultado, estado del servicio y métricas.
 
+La definición canónica y los contratos mínimos de esta cadena viven ahora en
+`QUANTUM_PIPELINE.md` y `omnixan.quantum_pipeline`.
+
 ## Servicios Amarr iniciales
 
 - Servicio de Misión Cuántica: recibe la solicitud y la traduce a objetivo.

@@ -80,6 +80,23 @@ def test_core_entrypoints_import_cleanly() -> None:
     assert redundant_deployment.get_author() == "Kirtan Teg Singh"
 
 
+def test_quantum_pipeline_contracts_are_available() -> None:
+    module = importlib.import_module("omnixan.quantum_pipeline")
+    mission = module.QuantumMission(
+        title="baseline-demo",
+        objective="Generate a canonical baseline quantum mission",
+    )
+    plan = module.build_baseline_quantum_plan(mission)
+    stages = module.get_canonical_quantum_pipeline()
+
+    assert module.QuantumPipelineStage.MISSION.value == "mission"
+    assert mission.preferred_backend_mode.value == "simulator_local"
+    assert plan.mission_id == mission.mission_id
+    assert plan.execution_path == "simulate"
+    assert stages[0].service_alias == "mission-service"
+    assert stages[-1].service_alias == "observation-service"
+
+
 def test_optional_quantum_modules_import_without_backends() -> None:
     module_names = [
         "omnixan.quantum_cloud_architecture.quantum_algorithm_module.module",
