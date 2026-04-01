@@ -9,7 +9,8 @@ La visión operativa de esa convergencia quedó documentada en `VISION.md`, y la
 campaña diaria que guía esa transición vive en `DAILY_TASKS.md`. Los principios
 que traducen la narrativa Amarr a decisiones de arquitectura y operación están
 en `AMARR_PRINCIPLES.md`. El lenguaje oficial y el catálogo inicial de
-servicios viven en `SERVICE_LANGUAGE.md`.
+servicios viven en `SERVICE_LANGUAGE.md`. La decisión actual bloque por bloque
+respecto del canon del producto quedó en `BLOCK_CANON_MAP.md`.
 
 ## Bloques principales
 

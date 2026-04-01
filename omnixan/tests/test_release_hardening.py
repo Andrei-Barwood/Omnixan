@@ -35,6 +35,7 @@ def test_release_artifacts_exist() -> None:
     vision = REPO_ROOT / "omnixan" / "docs" / "VISION.md"
     amarr_principles = REPO_ROOT / "omnixan" / "docs" / "AMARR_PRINCIPLES.md"
     service_language = REPO_ROOT / "omnixan" / "docs" / "SERVICE_LANGUAGE.md"
+    block_canon_map = REPO_ROOT / "omnixan" / "docs" / "BLOCK_CANON_MAP.md"
 
     assert changelog.exists()
     assert "0.2.0 - 2026-04-01" in changelog.read_text(encoding="utf-8")
@@ -60,6 +61,10 @@ def test_release_artifacts_exist() -> None:
     assert "## Catálogo inicial de servicios Amarr" in service_language.read_text(
         encoding="utf-8"
     )
+    assert block_canon_map.exists()
+    block_map_text = block_canon_map.read_text(encoding="utf-8")
+    assert "`quantum_cloud_architecture`" in block_map_text
+    assert "`carbon_based_quantum_cloud`" in block_map_text
 
 
 def test_hardened_modules_do_not_configure_global_logging_on_import() -> None:

@@ -108,7 +108,7 @@ se usa como documento operativo para llevar OMNIXAN desde "repo verificable" a
 - Validación: evitar nombres intercambiables o demasiado genericos.
 - Criterio de cierre: cada servicio debe tener una responsabilidad unica y
   reconocible.
-- Estado: iniciado en `SERVICE_LANGUAGE.md`.
+- Estado: completado en `SERVICE_LANGUAGE.md`.
 
 ### Día 14: Mapa del repo contra la visión
 
@@ -117,6 +117,7 @@ se usa como documento operativo para llevar OMNIXAN desde "repo verificable" a
 - Entregables: matriz bloque -> funcion -> estado -> decision.
 - Validación: no dejar bloques "presentes sin razon".
 - Criterio de cierre: poder justificar por que cada bloque sigue existiendo.
+- Estado: completado en `BLOCK_CANON_MAP.md`.
 
 ### Día 15: Clasificación operativa del código
 
