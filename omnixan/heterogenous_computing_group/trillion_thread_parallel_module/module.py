@@ -25,7 +25,6 @@ import numpy as np
 from pydantic import BaseModel, Field
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -719,4 +718,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

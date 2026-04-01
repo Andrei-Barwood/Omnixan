@@ -83,6 +83,8 @@ PYENV_VERSION=hokkaido python -m omnixan load-balancing --version
 - `python -m omnixan validate` ejecuta una validación integral de estilo CI local sobre doctor y pytest.
 - `scripts/ci_local.sh` encapsula la rutina reproducible de baseline y smokes opcionales para uso local o CI.
 - En esta revisión, la validación módulo por módulo del stack cuántico se ejecutó sobre Python 3.10.
+- La release interna de referencia de esta ronda quedó documentada en `INTERNAL_RELEASE_2026-04-01.md`.
+- El estado de soporte por bloque quedó resumido en `SUPPORT_STATUS.md`.
 
 ## Packaging
 

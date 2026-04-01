@@ -82,11 +82,14 @@ python -m omnixan redundant-deployment --smoke --json
 
 ## Documentacion adicional
 
+- [`CHANGELOG.md`](./CHANGELOG.md)
 - [`omnixan/docs/ARCHITECTURE.md`](./omnixan/docs/ARCHITECTURE.md)
 - [`omnixan/docs/CLI.md`](./omnixan/docs/CLI.md)
 - [`omnixan/docs/DEVELOPMENT.md`](./omnixan/docs/DEVELOPMENT.md)
+- [`omnixan/docs/INTERNAL_RELEASE_2026-04-01.md`](./omnixan/docs/INTERNAL_RELEASE_2026-04-01.md)
 - [`omnixan/docs/PACKAGING.md`](./omnixan/docs/PACKAGING.md)
 - [`omnixan/docs/REPO_STATUS.md`](./omnixan/docs/REPO_STATUS.md)
+- [`omnixan/docs/SUPPORT_STATUS.md`](./omnixan/docs/SUPPORT_STATUS.md)
 
 ## Ejemplo minimo
 

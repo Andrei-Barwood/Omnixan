@@ -160,16 +160,19 @@ STACK_HEALTH_RULES: dict[str, dict[str, Any]] = {
         "requires_all": ("numpy", "pydantic"),
         "severity": "environment_error",
         "message": "Core Python dependencies are missing.",
+        "ok_message": "Core Python dependencies are available.",
     },
     "distributed": {
         "requires_all": ("ray", "dask.distributed"),
         "severity": "warning",
         "message": "Distributed runtime is not fully installed.",
+        "ok_message": "Distributed runtime is available.",
     },
     "gpu": {
         "requires_any": (("cupy", "pycuda"),),
         "severity": "warning",
         "message": "GPU runtime is not installed.",
+        "ok_message": "GPU runtime is available.",
     },
     "edge-ai": {
         "requires_any": (
@@ -177,11 +180,13 @@ STACK_HEALTH_RULES: dict[str, dict[str, Any]] = {
         ),
         "severity": "warning",
         "message": "Extended Edge AI runtimes are not installed.",
+        "ok_message": "Extended Edge AI runtimes are available.",
     },
     "quantum": {
         "requires_all": ("qiskit", "qiskit_aer"),
         "severity": "warning",
         "message": "Quantum runtime is not fully installed.",
+        "ok_message": "Quantum runtime is available.",
     },
 }
 
@@ -376,7 +381,7 @@ def _evaluate_stack_health(
         results[stack_name] = {
             "status": status,
             "severity": rule["severity"],
-            "message": rule["message"],
+            "message": rule["message"] if deduped_missing else rule["ok_message"],
             "missing_dependencies": deduped_missing,
             "missing_dependency_groups": missing_dependency_groups,
         }

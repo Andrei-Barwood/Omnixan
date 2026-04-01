@@ -29,7 +29,6 @@ from omnixan.api_contract import (
 )
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 

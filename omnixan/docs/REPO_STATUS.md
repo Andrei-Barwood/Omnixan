@@ -24,6 +24,9 @@
 - `omnixan.doctor` ahora distingue warnings, conflictos de paquetes, módulos degradados y separa errores de entorno de errores de código.
 - Se añadió `python -m omnixan validate` como comando de validación integral para CI local.
 - Se añadió `scripts/ci_local.sh` y una base de GitHub Actions para ejecutar baseline en Python 3.10 y 3.13, con smokes opcionales en un job separado.
+- Se eliminó la configuración global de logging al importar módulos validados.
+- Se hizo idempotente el logger de `RedundantDeploymentModule` para evitar handlers duplicados.
+- Se preparó una release interna con changelog y estado de soporte por bloque.
 
 ## Validación distribuida profunda ejecutada
 
@@ -40,9 +43,15 @@
 - `quantum_simulator_module`: simula circuitos medidos y recupera `statevector` removiendo mediciones finales.
 - `quantum_ml_module`: entrena y predice con un VQC mínimo sin invocar `predict()` antes de marcar el modelo como entrenado.
 
-## Riesgos que siguen abiertos
+## Riesgos abiertos priorizados
 
-- Gran parte de los módulos siguen siendo amplios y poco cubiertos por tests de comportamiento.
-- Los backends cuánticos y distribuidos no vienen instalados por defecto; su disponibilidad depende del entorno.
-- Existen módulos con dependencias opcionales adicionales fuera del baseline validado; hoy están agrupadas en extras temáticos, no instaladas por defecto.
-- El `venv/` histórico del repo puede contener paquetes ajenos al stack actual; conviene validarlo con `python -m pip check` si se reutiliza.
+1. Gran parte de los módulos históricos siguen siendo amplios y poco cubiertos por tests de comportamiento fuera del baseline validado.
+2. Los backends cuánticos, distribuidos y GPU no vienen instalados por defecto; su disponibilidad depende del entorno y debe tratarse como opt-in.
+3. Existen módulos con dependencias opcionales adicionales fuera del baseline validado; hoy están agrupadas en extras temáticos, no instaladas por defecto.
+4. El `venv/` histórico del repo puede contener paquetes ajenos al stack actual; conviene validarlo con `python -m pip check` si se reutiliza.
+
+## Artefactos de release
+
+- `CHANGELOG.md` resume la release interna consolidada al 2026-04-01.
+- `omnixan/docs/SUPPORT_STATUS.md` resume el estado de soporte por bloque.
+- `omnixan/docs/INTERNAL_RELEASE_2026-04-01.md` documenta el criterio de go/no-go interno.

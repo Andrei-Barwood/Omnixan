@@ -243,14 +243,16 @@ class RedundantDeploymentModule:
         """Setup structured logging"""
         logger = logging.getLogger("RedundantDeploymentModule")
         logger.setLevel(getattr(logging, log_level.upper()))
-        
-        handler = logging.StreamHandler()
-        formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-        )
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-        
+        logger.propagate = False
+
+        if not logger.handlers:
+            handler = logging.StreamHandler()
+            formatter = logging.Formatter(
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            )
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
+
         return logger
     
     def _audit_log_event(self, event_type: str, details: Dict[str, Any]) -> None:

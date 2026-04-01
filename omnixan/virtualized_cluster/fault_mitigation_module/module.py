@@ -24,7 +24,6 @@ from pydantic import BaseModel, Field
 from omnixan.api_contract import APIResponse, require_operation, success_response
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 

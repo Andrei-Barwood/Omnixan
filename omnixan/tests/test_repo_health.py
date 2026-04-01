@@ -128,6 +128,8 @@ def test_doctor_json_report_contains_expected_checks() -> None:
     assert "code_errors" in report
     assert "distributed" in report["stack_health"]
     assert "quantum" in report["stack_health"]
+    assert report["stack_health"]["core"]["status"] == "ok"
+    assert "available" in report["stack_health"]["core"]["message"].lower()
     assert "cupy" in report["dependencies"]
     assert "pycuda" in report["dependencies"]
     assert "tensorflow" in report["dependencies"]
