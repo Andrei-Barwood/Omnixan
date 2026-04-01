@@ -1,91 +1,54 @@
 # OMNIXAN
 
-OMNIXAN es un workspace Python orientado a experimentación modular en cloud,
-edge, supercomputación y computación cuántica. El repositorio contiene bloques
-independientes que se pueden importar por separado y un conjunto de utilidades
-para verificar el estado del entorno antes de ejecutar módulos opcionales.
+OMNIXAN es un workspace Python orientado a experimentacion modular en cloud,
+edge, supercomputacion y computacion cuantica. El repo ya tiene una base
+estable para importar paquetes, ejecutar smokes y diagnosticar dependencias
+opcionales sin romper imports.
 
 ## Estado actual
 
-- El paquete principal vive en [`omnixan/`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan).
-- Los backends cuánticos y distribuidos son opcionales: el código puede
-  importarse sin ellos, pero las funciones específicas requieren instalar sus
-  dependencias.
-- La raíz del repo ahora incluye un `pyproject.toml` para dar un punto de
-  entrada consistente a instalación, testing y tooling.
-- El archivo autoritativo de packaging es [`pyproject.toml`](/Users/kirtantegsingh/Public/omnixan/Omnixan/pyproject.toml).
-- [`omnixan/setup.py`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/setup.py),
-  [`omnixan/requirements.txt`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/requirements.txt)
-  y [`omnixan/pyproject.toml`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/pyproject.toml)
-  quedaron marcados como archivos históricos o de conveniencia.
+- Fuente de verdad de packaging: `pyproject.toml`
+- CLI oficial: `python -m omnixan`
+- Diagnostico oficial: `python -m omnixan doctor --json`
+- La API publica comun en modulos core usa `initialize()`, `execute()`,
+  `shutdown()`, `get_status()` y `get_metrics()`
+- Los backends cuanticos, distribuidos y GPU siguen siendo opcionales
 
-## Estructura
+## Instalacion
 
-```text
-omnixan/
-├── carbon_based_quantum_cloud/
-├── edge_computing_network/
-├── heterogenous_computing_group/
-├── in_memory_computing_cloud/
-├── quantum_cloud_architecture/
-├── supercomputing_interconnect_cloud/
-├── virtualized_cluster/
-├── docs/
-├── tests/
-└── doctor.py
-```
-
-## Verificación rápida
-
-```bash
-PYENV_VERSION=hokkaido python -m omnixan doctor
-PYENV_VERSION=hokkaido python -m pytest omnixan/tests
-```
-
-Smoke suite core por bloque:
-
-```bash
-PYENV_VERSION=hokkaido python -m pytest omnixan/tests -k core_block_smoke
-```
-
-Smoke suite cuántica opcional:
-
-```bash
-python -m pip install -e '.[quantum,dev]'
-python -m pytest omnixan/tests -k quantum_stack_smoke
-```
-
-Smoke suite distribuida opcional:
-
-```bash
-python -m pip install -e '.[distributed,dev]'
-python -m pytest omnixan/tests -k distributed_stack_smoke
-python -m omnixan doctor --json
-```
-
-## Instalación
-
-Instalación editable mínima:
+Instalacion minima:
 
 ```bash
 PYENV_VERSION=hokkaido python -m pip install -e .
 ```
 
-Instalación con extras útiles:
+Extras utiles:
 
 ```bash
 PYENV_VERSION=hokkaido python -m pip install -e '.[dev]'
-PYENV_VERSION=hokkaido python -m pip install -e '.[cloud]'
 PYENV_VERSION=hokkaido python -m pip install -e '.[quantum]'
 PYENV_VERSION=hokkaido python -m pip install -e '.[distributed]'
+PYENV_VERSION=hokkaido python -m pip install -e '.[cloud]'
 ```
 
-Para una validación cuántica profunda en un solo entorno:
+## Verificacion rapida
 
 ```bash
-python -m pip install -e '.[quantum,dev]'
-python -m omnixan doctor --json
-python -m pytest omnixan/tests
+PYENV_VERSION=hokkaido python -m omnixan doctor --json
+PYENV_VERSION=hokkaido python -m pytest omnixan/tests
+```
+
+Smokes por bloque:
+
+```bash
+PYENV_VERSION=hokkaido python -m pytest omnixan/tests -k core_block_smoke
+```
+
+Smokes opcionales:
+
+```bash
+PYENV_VERSION=hokkaido python -m pytest omnixan/tests -k quantum_stack_smoke
+PYENV_VERSION=hokkaido python -m pytest omnixan/tests -k distributed_stack_smoke
 ```
 
 ## CLI oficial
@@ -97,23 +60,58 @@ python -m omnixan load-balancing --smoke --json
 python -m omnixan redundant-deployment --smoke --json
 ```
 
-## Documentación
+## Documentacion operativa por bloque
 
-- Arquitectura: [`omnixan/docs/ARCHITECTURE.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/ARCHITECTURE.md)
-- CLI oficial: [`omnixan/docs/CLI.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/CLI.md)
-- Desarrollo y validación: [`omnixan/docs/DEVELOPMENT.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/DEVELOPMENT.md)
-- Packaging: [`omnixan/docs/PACKAGING.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/PACKAGING.md)
-- Estado del repo: [`omnixan/docs/REPO_STATUS.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/docs/REPO_STATUS.md)
-- Notas cuánticas adicionales: [`omnixan/QUANTUM_SETUP.md`](/Users/kirtantegsingh/Public/omnixan/Omnixan/omnixan/QUANTUM_SETUP.md)
+- [`omnixan/carbon_based_quantum_cloud/README.md`](./omnixan/carbon_based_quantum_cloud/README.md)
+- [`omnixan/edge_computing_network/README.md`](./omnixan/edge_computing_network/README.md)
+- [`omnixan/heterogenous_computing_group/README.md`](./omnixan/heterogenous_computing_group/README.md)
+- [`omnixan/in_memory_computing_cloud/README.md`](./omnixan/in_memory_computing_cloud/README.md)
+- [`omnixan/quantum_cloud_architecture/README.md`](./omnixan/quantum_cloud_architecture/README.md)
+- [`omnixan/supercomputing_interconnect_cloud/README.md`](./omnixan/supercomputing_interconnect_cloud/README.md)
+- [`omnixan/virtualized_cluster/README.md`](./omnixan/virtualized_cluster/README.md)
 
-## Ejemplo
+## Documentacion adicional
+
+- [`omnixan/docs/ARCHITECTURE.md`](./omnixan/docs/ARCHITECTURE.md)
+- [`omnixan/docs/CLI.md`](./omnixan/docs/CLI.md)
+- [`omnixan/docs/DEVELOPMENT.md`](./omnixan/docs/DEVELOPMENT.md)
+- [`omnixan/docs/PACKAGING.md`](./omnixan/docs/PACKAGING.md)
+- [`omnixan/docs/REPO_STATUS.md`](./omnixan/docs/REPO_STATUS.md)
+
+## Ejemplo minimo
 
 ```python
-from omnixan.carbon_based_quantum_cloud.load_balancing_module import (
+import asyncio
+
+from omnixan.carbon_based_quantum_cloud.load_balancing_module.module import (
     BackendConfig,
+    HealthCheckConfig,
+    LoadBalancingAlgorithm,
+    LoadBalancingAlgorithmType,
     LoadBalancingModule,
+    LoadBalancingModuleConfig,
+    Request,
 )
 
-module = LoadBalancingModule()
-backend = BackendConfig(host="127.0.0.1", port=8080)
+
+async def main() -> None:
+    module = LoadBalancingModule(
+        LoadBalancingModuleConfig(
+            algorithm=LoadBalancingAlgorithm(
+                algorithm_type=LoadBalancingAlgorithmType.ROUND_ROBIN
+            ),
+            health_check=HealthCheckConfig(healthy_threshold=1),
+        )
+    )
+    await module.initialize()
+    try:
+        await module.add_backend(BackendConfig(host="127.0.0.1", port=8080))
+        result = await module.route_request(Request(client_ip="127.0.0.1"))
+        print(result.backend_id)
+        print(module.get_status())
+    finally:
+        await module.shutdown()
+
+
+asyncio.run(main())
 ```

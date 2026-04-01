@@ -71,6 +71,7 @@ PYENV_VERSION=hokkaido python -m omnixan load-balancing --version
 - La smoke suite core cubre un módulo crítico por bloque principal sin depender de stacks opcionales pesados.
 - Los módulos con CUDA, GPU o runtimes pesados ahora deben fallar al usar el backend ausente, no al importar el paquete.
 - Los módulos core alineados en esta revisión exponen `initialize()`, `execute()`, `shutdown()`, `get_status()` y `get_metrics()` como superficie pública común.
+- Los README de bloque y de los módulos core validados se actualizaron con rutas felices, comandos oficiales y ejemplos mínimos ejecutables contra el estado actual del repo.
 - En esta revisión, la validación módulo por módulo del stack cuántico se ejecutó sobre Python 3.10.
 
 ## Packaging

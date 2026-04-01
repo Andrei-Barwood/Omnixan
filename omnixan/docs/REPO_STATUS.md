@@ -20,6 +20,7 @@
 - Se añadió una smoke suite core para cubrir import, inicialización y una operación simple en los seis bloques principales no cuánticos.
 - Se auditó el manejo de backends pesados para que CUDA y formatos Edge AI opcionales fallen con mensajes claros en runtime y no al importar módulos.
 - Se empezó a unificar la API pública de módulos core con envelope estándar en `execute()` y métodos comunes `get_status()` y `get_metrics()`.
+- Se reescribió la documentación operativa por bloque y por módulo crítico para reflejar el estado real validado del repo, con ejemplos mínimos ejecutables y notas de dependencias opcionales.
 
 ## Validación distribuida profunda ejecutada
 

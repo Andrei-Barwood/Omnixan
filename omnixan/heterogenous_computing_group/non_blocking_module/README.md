@@ -1,54 +1,48 @@
 # Non-Blocking Module
 
-**Status: ✅ IMPLEMENTED**
+Modulo operativo para ejecucion asincrona y estructuras non-blocking dentro de
+`heterogenous_computing_group`.
 
-Production-ready non-blocking I/O module with lock-free data structures and async operations.
+## Estado actual
 
-## Features
+- Validado con smoke y suite de consistencia
+- No requiere extras opcionales para la ruta feliz documentada
+- Expone la API publica comun:
+  `initialize()`, `execute()`, `shutdown()`, `get_status()`, `get_metrics()`
 
-- **Lock-Free Structures**: Ring buffers, queues
-- **Async Operations**: Submit, poll, wait
-- **Completion Queues**: Event-driven callbacks
-- **Batching**: Efficient batch submission
+## Nota de consistencia
 
-## Quick Start
+- `execute()` devuelve un envelope comun con `status`, `operation` y payload
+- El estado especifico de una operacion se expone como `op_status` dentro del
+  payload cuando corresponde
+
+## Ejemplo minimo ejecutable
 
 ```python
+import asyncio
+
 from omnixan.heterogenous_computing_group.non_blocking_module.module import (
-    NonBlockingModule, NonBlockingConfig, OperationType
+    NonBlockingModule,
+    OperationType,
 )
 
-module = NonBlockingModule(NonBlockingConfig(worker_threads=4))
-await module.initialize()
 
-# Submit operation
-op = await module.submit(OperationType.COMPUTE, data={"input": "test"})
+async def main() -> None:
+    module = NonBlockingModule()
+    await module.initialize()
+    try:
+        op = await module.submit(OperationType.COMPUTE, data={"payload": "hello"})
+        result = await module.wait(op.op_id, timeout=1.0)
+        print(result.result)
+        print(module.get_status())
+        print(module.get_metrics())
+    finally:
+        await module.shutdown()
 
-# Wait for completion
-result = await module.wait(op.op_id, timeout=5.0)
-print(f"Status: {result.status.value}")
 
-# Poll completions
-events = module.completion_queue.poll_completions()
-
-await module.shutdown()
+asyncio.run(main())
 ```
 
-## Queue Policies
+## Dependencias opcionales
 
-| Policy | Description |
-|--------|-------------|
-| FIFO | First-in, first-out |
-| LIFO | Last-in, first-out |
-| Priority | Priority-based ordering |
-
-## Metrics
-
-```python
-{
-    "completed_operations": 10000,
-    "avg_latency_ms": 0.5,
-    "throughput_ops_per_sec": 20000,
-    "queue_depth": 50
-}
-```
+- Ninguna para la ruta feliz del modulo

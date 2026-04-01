@@ -1,69 +1,51 @@
-# 🔄 Cache Coherence Module
+# Cache Coherence Module
 
-## 📖 Descripción
+Modulo operativo de coherencia de cache distribuida dentro de
+`edge_computing_network`.
 
-Módulo de coherencia de caché distribuida para OMNIXAN que implementa protocolos MESI/MOESI con invalidación automática, sincronización y resolución de conflictos.
+## Estado actual
 
-## 🎯 Características
+- Validado con smoke y suite de consistencia
+- No requiere extras opcionales para la ruta feliz documentada
+- Expone la API publica comun:
+  `initialize()`, `execute()`, `shutdown()`, `get_status()`, `get_metrics()`
 
-- 🔄 Protocolos MESI y MOESI
-- 📡 Operaciones de bus (read, write, invalidate)
-- 🗂️ Directory-based coherence tracking
-- 📊 Métricas detalladas (hit rate, invalidations)
-- ⚡ Sincronización automática
+## Ruta feliz
 
-## 🏗️ Estados de Cache Line
+1. Inicializar el modulo
+2. Registrar nodos con `register_node()`
+3. Escribir un valor compartido con `write()`
+4. Leerlo desde otro nodo con `read()`
+5. Consultar `get_status()` y `get_metrics()`
 
-| Estado | Descripción |
-|--------|-------------|
-| M (Modified) | Modificado, único propietario |
-| O (Owned) | Modificado pero compartido (MOESI) |
-| E (Exclusive) | Limpio, único propietario |
-| S (Shared) | Limpio, múltiples copias |
-| I (Invalid) | Inválido |
-
-## 💡 Uso Rápido
+## Ejemplo minimo ejecutable
 
 ```python
 import asyncio
+
 from omnixan.edge_computing_network.cache_coherence_module.module import (
     CacheCoherenceModule,
-    CacheCoherenceConfig,
-    CoherenceProtocol
 )
 
-async def main():
-    config = CacheCoherenceConfig(
-        protocol=CoherenceProtocol.MESI,
-        cache_size=1000
-    )
-    
-    module = CacheCoherenceModule(config)
+
+async def main() -> None:
+    module = CacheCoherenceModule()
     await module.initialize()
-    
-    # Registrar nodos
-    module.register_node("node1")
-    module.register_node("node2")
-    
-    # Escritura
-    await module.write("node1", "key1", "value1")
-    
-    # Lectura (coherente)
-    value, hit = await module.read("node2", "key1")
-    
-    # Métricas
-    metrics = module.get_metrics()
-    print(f"Hit rate: {metrics['overall_hit_rate']:.2%}")
-    
-    await module.shutdown()
+    try:
+        module.register_node("node-a")
+        module.register_node("node-b")
+        await module.write("node-a", "shared-key", {"value": 42})
+        value, hit = await module.read("node-b", "shared-key")
+        print(value, hit)
+        print(module.get_status())
+        print(module.get_metrics())
+    finally:
+        await module.shutdown()
+
 
 asyncio.run(main())
 ```
 
-## 📦 Dependencias
+## Dependencias opcionales
 
-- `pydantic>=2.5.0`
-- `asyncio`
-
----
-**Status:** ✅ Implementado | **Última actualización:** 2025-01-XX
+- Ninguna para la ruta feliz del modulo
