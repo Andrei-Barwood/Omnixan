@@ -8,7 +8,8 @@ canónica y narrativa Amarr.
 La visión operativa de esa convergencia quedó documentada en `VISION.md`, y la
 campaña diaria que guía esa transición vive en `DAILY_TASKS.md`. Los principios
 que traducen la narrativa Amarr a decisiones de arquitectura y operación están
-en `AMARR_PRINCIPLES.md`.
+en `AMARR_PRINCIPLES.md`. El lenguaje oficial y el catálogo inicial de
+servicios viven en `SERVICE_LANGUAGE.md`.
 
 ## Bloques principales
 

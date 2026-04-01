@@ -64,6 +64,9 @@ El desarrollo detallado de estos principios quedó aterrizado en
 - Servicio de Continuidad Imperial: aporta redundancia, balanceo y failover.
 - Servicio de Juicio y Observación: expone métricas, estado y degradación.
 
+El lenguaje formal y el primer catálogo de estos servicios quedaron definidos en
+`SERVICE_LANGUAGE.md`.
+
 ## Estado real al inicio de esta fase
 
 - El baseline del repo ya es import-safe, testeable y documentado.

@@ -91,6 +91,7 @@ python -m omnixan redundant-deployment --smoke --json
 - [`omnixan/docs/INTERNAL_RELEASE_2026-04-01.md`](./omnixan/docs/INTERNAL_RELEASE_2026-04-01.md)
 - [`omnixan/docs/PACKAGING.md`](./omnixan/docs/PACKAGING.md)
 - [`omnixan/docs/REPO_STATUS.md`](./omnixan/docs/REPO_STATUS.md)
+- [`omnixan/docs/SERVICE_LANGUAGE.md`](./omnixan/docs/SERVICE_LANGUAGE.md)
 - [`omnixan/docs/SUPPORT_STATUS.md`](./omnixan/docs/SUPPORT_STATUS.md)
 - [`omnixan/docs/VISION.md`](./omnixan/docs/VISION.md)
 

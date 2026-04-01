@@ -34,6 +34,7 @@ def test_release_artifacts_exist() -> None:
     daily_tasks = REPO_ROOT / "omnixan" / "docs" / "DAILY_TASKS.md"
     vision = REPO_ROOT / "omnixan" / "docs" / "VISION.md"
     amarr_principles = REPO_ROOT / "omnixan" / "docs" / "AMARR_PRINCIPLES.md"
+    service_language = REPO_ROOT / "omnixan" / "docs" / "SERVICE_LANGUAGE.md"
 
     assert changelog.exists()
     assert "0.2.0 - 2026-04-01" in changelog.read_text(encoding="utf-8")
@@ -53,6 +54,10 @@ def test_release_artifacts_exist() -> None:
     )
     assert amarr_principles.exists()
     assert "## Glosario operativo inicial" in amarr_principles.read_text(
+        encoding="utf-8"
+    )
+    assert service_language.exists()
+    assert "## Catálogo inicial de servicios Amarr" in service_language.read_text(
         encoding="utf-8"
     )
 

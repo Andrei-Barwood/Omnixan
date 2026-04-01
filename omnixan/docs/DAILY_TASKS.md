@@ -86,7 +86,7 @@ se usa como documento operativo para llevar OMNIXAN desde "repo verificable" a
 - Validación: coherencia entre `VISION.md`, `README.md` y estado real del repo.
 - Criterio de cierre: poder explicar OMNIXAN en menos de 60 segundos sin
   contradicciones.
-- Estado: iniciado y documentado en `VISION.md`.
+- Estado: completado en `VISION.md`.
 
 ### Día 12: Traducción Amarr
 
@@ -98,7 +98,7 @@ se usa como documento operativo para llevar OMNIXAN desde "repo verificable" a
   no solo a estilo visual.
 - Criterio de cierre: lista canonica de principios que guien arquitectura,
   naming y observabilidad.
-- Estado: iniciado y documentado en `AMARR_PRINCIPLES.md`.
+- Estado: completado en `AMARR_PRINCIPLES.md`.
 
 ### Día 13: Lenguaje y catálogo de servicios
 
@@ -108,6 +108,7 @@ se usa como documento operativo para llevar OMNIXAN desde "repo verificable" a
 - Validación: evitar nombres intercambiables o demasiado genericos.
 - Criterio de cierre: cada servicio debe tener una responsabilidad unica y
   reconocible.
+- Estado: iniciado en `SERVICE_LANGUAGE.md`.
 
 ### Día 14: Mapa del repo contra la visión
 
