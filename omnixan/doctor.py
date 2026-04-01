@@ -313,7 +313,7 @@ def _probe_import(module_name: str) -> dict[str, Any]:
         }
 
 
-def _run_pip_check() -> dict[str, Any]:
+def run_package_check() -> dict[str, Any]:
     """Run ``pip check`` to detect broken requirements."""
     command = [sys.executable, "-m", "pip", "check"]
     result = subprocess.run(
@@ -495,7 +495,7 @@ def _build_findings(
             }
         )
 
-    if package_conflicts["status"] != "ok":
+    if package_conflicts["status"] == "error":
         environment_errors.append(
             {
                 "kind": "package_conflicts",
@@ -576,7 +576,7 @@ def collect_report(include_package_conflicts: bool = True) -> dict[str, Any]:
     stack_health = _evaluate_stack_health(dependency_results)
     module_health = _evaluate_module_health(dependency_results, module_imports)
     package_conflicts = (
-        _run_pip_check()
+        run_package_check()
         if include_package_conflicts
         else {
             "status": "skipped",

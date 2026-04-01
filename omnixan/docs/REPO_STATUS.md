@@ -23,6 +23,7 @@
 - Se reescribió la documentación operativa por bloque y por módulo crítico para reflejar el estado real validado del repo, con ejemplos mínimos ejecutables y notas de dependencias opcionales.
 - `omnixan.doctor` ahora distingue warnings, conflictos de paquetes, módulos degradados y separa errores de entorno de errores de código.
 - Se añadió `python -m omnixan validate` como comando de validación integral para CI local.
+- Se añadió `scripts/ci_local.sh` y una base de GitHub Actions para ejecutar baseline en Python 3.10 y 3.13, con smokes opcionales en un job separado.
 
 ## Validación distribuida profunda ejecutada
 

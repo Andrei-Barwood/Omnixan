@@ -55,6 +55,17 @@ def test_legacy_packaging_files_are_marked_historical() -> None:
     assert "tensorflow-quantum" not in requirements_text
 
 
+def test_ci_assets_exist() -> None:
+    ci_workflow = REPO_ROOT / ".github" / "workflows" / "ci.yml"
+    ci_script = REPO_ROOT / "scripts" / "ci_local.sh"
+
+    assert ci_workflow.exists()
+    assert "actions/checkout@v6" in ci_workflow.read_text(encoding="utf-8")
+    assert "actions/setup-python@v6" in ci_workflow.read_text(encoding="utf-8")
+    assert ci_script.exists()
+    assert "omnixan validate --json" in ci_script.read_text(encoding="utf-8")
+
+
 def test_core_entrypoints_import_cleanly() -> None:
     load_balancing = importlib.import_module(
         "omnixan.carbon_based_quantum_cloud.load_balancing_module"

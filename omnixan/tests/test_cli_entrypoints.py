@@ -72,6 +72,9 @@ def test_root_cli_validate_json_skip_tests() -> None:
     payload = json.loads(result.stdout)
     assert payload["summary"]["status"] in {"ok", "warning"}
     assert payload["tests"]["status"] == "skipped"
+    assert payload["pip_check"]["status"] == "ok"
+    assert payload["checks"]["optional_smokes"]["quantum"]["status"] == "skipped"
+    assert payload["checks"]["optional_smokes"]["distributed"]["status"] == "skipped"
     assert "doctor" in payload
 
 

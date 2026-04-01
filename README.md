@@ -40,6 +40,13 @@ PYENV_VERSION=hokkaido python -m omnixan validate --json --skip-tests
 PYENV_VERSION=hokkaido python -m pytest omnixan/tests
 ```
 
+Rutina reproducible local:
+
+```bash
+./scripts/ci_local.sh baseline
+./scripts/ci_local.sh optional-smokes
+```
+
 Smokes por bloque:
 
 ```bash

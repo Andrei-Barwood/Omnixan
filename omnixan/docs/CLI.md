@@ -43,6 +43,13 @@ python -m omnixan validate --json --skip-tests
 python -m omnixan validate --json
 ```
 
+Rutina reproducible local:
+
+```bash
+./scripts/ci_local.sh baseline
+./scripts/ci_local.sh optional-smokes
+```
+
 Smoke rápido de load balancing:
 
 ```bash

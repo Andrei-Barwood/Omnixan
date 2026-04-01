@@ -18,6 +18,7 @@ Validación integral estilo CI local:
 
 ```bash
 PYENV_VERSION=hokkaido python -m omnixan validate --json
+./scripts/ci_local.sh baseline
 ```
 
 Pruebas mínimas del repo:
@@ -80,6 +81,7 @@ PYENV_VERSION=hokkaido python -m omnixan load-balancing --version
 - Los README de bloque y de los módulos core validados se actualizaron con rutas felices, comandos oficiales y ejemplos mínimos ejecutables contra el estado actual del repo.
 - `omnixan.doctor` ahora separa warnings, errores de entorno, errores de código, conflictos de paquetes y módulos degradados.
 - `python -m omnixan validate` ejecuta una validación integral de estilo CI local sobre doctor y pytest.
+- `scripts/ci_local.sh` encapsula la rutina reproducible de baseline y smokes opcionales para uso local o CI.
 - En esta revisión, la validación módulo por módulo del stack cuántico se ejecutó sobre Python 3.10.
 
 ## Packaging
