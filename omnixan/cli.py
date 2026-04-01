@@ -16,6 +16,10 @@ COMMAND_TARGETS: dict[str, tuple[str, str]] = {
         "Run workspace diagnostics",
         "omnixan.doctor:main",
     ),
+    "validate": (
+        "Run local CI-style validation",
+        "omnixan.validate:main",
+    ),
     "load-balancing": (
         "Run or smoke-test the load balancing module",
         "omnixan.carbon_based_quantum_cloud.load_balancing_module.__main__:main",

@@ -21,6 +21,8 @@
 - Se auditó el manejo de backends pesados para que CUDA y formatos Edge AI opcionales fallen con mensajes claros en runtime y no al importar módulos.
 - Se empezó a unificar la API pública de módulos core con envelope estándar en `execute()` y métodos comunes `get_status()` y `get_metrics()`.
 - Se reescribió la documentación operativa por bloque y por módulo crítico para reflejar el estado real validado del repo, con ejemplos mínimos ejecutables y notas de dependencias opcionales.
+- `omnixan.doctor` ahora distingue warnings, conflictos de paquetes, módulos degradados y separa errores de entorno de errores de código.
+- Se añadió `python -m omnixan validate` como comando de validación integral para CI local.
 
 ## Validación distribuida profunda ejecutada
 

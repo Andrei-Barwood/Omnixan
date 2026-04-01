@@ -14,6 +14,12 @@ Diagnóstico rápido del workspace:
 PYENV_VERSION=hokkaido python -m omnixan doctor
 ```
 
+Validación integral estilo CI local:
+
+```bash
+PYENV_VERSION=hokkaido python -m omnixan validate --json
+```
+
 Pruebas mínimas del repo:
 
 ```bash
@@ -72,6 +78,8 @@ PYENV_VERSION=hokkaido python -m omnixan load-balancing --version
 - Los módulos con CUDA, GPU o runtimes pesados ahora deben fallar al usar el backend ausente, no al importar el paquete.
 - Los módulos core alineados en esta revisión exponen `initialize()`, `execute()`, `shutdown()`, `get_status()` y `get_metrics()` como superficie pública común.
 - Los README de bloque y de los módulos core validados se actualizaron con rutas felices, comandos oficiales y ejemplos mínimos ejecutables contra el estado actual del repo.
+- `omnixan.doctor` ahora separa warnings, errores de entorno, errores de código, conflictos de paquetes y módulos degradados.
+- `python -m omnixan validate` ejecuta una validación integral de estilo CI local sobre doctor y pytest.
 - En esta revisión, la validación módulo por módulo del stack cuántico se ejecutó sobre Python 3.10.
 
 ## Packaging

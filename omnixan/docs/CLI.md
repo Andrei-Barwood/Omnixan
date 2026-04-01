@@ -7,6 +7,7 @@ pocos entrypoints estables y testeados:
 
 - `python -m omnixan --help`
 - `python -m omnixan doctor [--json]`
+- `python -m omnixan validate [--json|--skip-tests|--strict-environment]`
 - `python -m omnixan load-balancing [--version|--smoke|--json|--config ...]`
 - `python -m omnixan redundant-deployment [--version|--smoke|--json]`
 
@@ -15,6 +16,7 @@ repo desde la raíz:
 
 - `omnixan`
 - `omnixan-doctor`
+- `omnixan-validate`
 - `omnixan-load-balancing`
 - `omnixan-redundant-deployment`
 
@@ -37,6 +39,8 @@ Diagnóstico general:
 ```bash
 python -m omnixan doctor
 python -m omnixan doctor --json
+python -m omnixan validate --json --skip-tests
+python -m omnixan validate --json
 ```
 
 Smoke rápido de load balancing:

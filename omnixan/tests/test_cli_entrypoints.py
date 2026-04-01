@@ -14,6 +14,7 @@ def test_root_cli_help_lists_supported_commands() -> None:
     )
 
     assert "doctor" in result.stdout
+    assert "validate" in result.stdout
     assert "load-balancing" in result.stdout
     assert "redundant-deployment" in result.stdout
 
@@ -51,6 +52,27 @@ def test_load_balancing_cli_smoke_json() -> None:
     assert payload["version"] == "1.0.0"
     assert payload["backends"] == 2
     assert payload["total_requests"] == 1
+
+
+def test_root_cli_validate_json_skip_tests() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "omnixan",
+            "validate",
+            "--json",
+            "--skip-tests",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    payload = json.loads(result.stdout)
+    assert payload["summary"]["status"] in {"ok", "warning"}
+    assert payload["tests"]["status"] == "skipped"
+    assert "doctor" in payload
 
 
 def test_redundant_deployment_cli_smoke_json() -> None:

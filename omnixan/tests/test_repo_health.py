@@ -22,6 +22,7 @@ def test_root_pyproject_exists_and_is_parseable() -> None:
     assert data["project"]["name"] == "omnixan"
     assert data["project"]["version"] == "0.2.0"
     assert "omnixan" in data["project"]["scripts"]
+    assert "omnixan-validate" in data["project"]["scripts"]
     assert "omnixan-load-balancing" in data["project"]["scripts"]
     assert "omnixan-redundant-deployment" in data["project"]["scripts"]
     assert "cloud" in data["project"]["optional-dependencies"]
@@ -108,6 +109,14 @@ def test_doctor_json_report_contains_expected_checks() -> None:
     report = json.loads(result.stdout)
 
     assert report["package"]["version"] == "0.2.0"
+    assert report["summary"]["status"] in {"ok", "warning", "error"}
+    assert "package_conflicts" in report
+    assert "module_health" in report
+    assert "warnings" in report
+    assert "environment_errors" in report
+    assert "code_errors" in report
+    assert "distributed" in report["stack_health"]
+    assert "quantum" in report["stack_health"]
     assert "cupy" in report["dependencies"]
     assert "pycuda" in report["dependencies"]
     assert "tensorflow" in report["dependencies"]
@@ -126,3 +135,19 @@ def test_doctor_json_report_contains_expected_checks() -> None:
     assert report["module_imports"]["quantum_error_correction"]["status"] == "ok"
     assert report["module_imports"]["quantum_ml"]["status"] == "ok"
     assert report["module_imports"]["quantum_simulator"]["status"] == "ok"
+    assert report["module_health"]["cuda_acceleration"]["status"] in {"ok", "degraded"}
+    assert report["module_health"]["edge_ai"]["status"] in {"ok", "degraded"}
+
+
+def test_doctor_text_report_separates_environment_and_code_sections() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "omnixan.doctor"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert "Warnings:" in result.stdout
+    assert "Environment errors:" in result.stdout
+    assert "Code errors:" in result.stdout
+    assert "Package conflicts:" in result.stdout

@@ -10,6 +10,7 @@ opcionales sin romper imports.
 - Fuente de verdad de packaging: `pyproject.toml`
 - CLI oficial: `python -m omnixan`
 - Diagnostico oficial: `python -m omnixan doctor --json`
+- Validacion integral local: `python -m omnixan validate --json`
 - La API publica comun en modulos core usa `initialize()`, `execute()`,
   `shutdown()`, `get_status()` y `get_metrics()`
 - Los backends cuanticos, distribuidos y GPU siguen siendo opcionales
@@ -35,6 +36,7 @@ PYENV_VERSION=hokkaido python -m pip install -e '.[cloud]'
 
 ```bash
 PYENV_VERSION=hokkaido python -m omnixan doctor --json
+PYENV_VERSION=hokkaido python -m omnixan validate --json --skip-tests
 PYENV_VERSION=hokkaido python -m pytest omnixan/tests
 ```
 
@@ -56,6 +58,7 @@ PYENV_VERSION=hokkaido python -m pytest omnixan/tests -k distributed_stack_smoke
 ```bash
 python -m omnixan --help
 python -m omnixan doctor --json
+python -m omnixan validate --json
 python -m omnixan load-balancing --smoke --json
 python -m omnixan redundant-deployment --smoke --json
 ```
