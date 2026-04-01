@@ -1,7 +1,14 @@
 # Arquitectura
 
 OMNIXAN está organizado como un paquete Python con bloques temáticos. Cada
-bloque agrupa módulos autocontenidos que pueden evolucionar de forma separada.
+bloque agrupa módulos autocontenidos, pero la dirección actual del proyecto es
+convergerlos hacia una plataforma de servicios híbridos con cadena cuántica
+canónica y narrativa Amarr.
+
+La visión operativa de esa convergencia quedó documentada en `VISION.md`, y la
+campaña diaria que guía esa transición vive en `DAILY_TASKS.md`. Los principios
+que traducen la narrativa Amarr a decisiones de arquitectura y operación están
+en `AMARR_PRINCIPLES.md`.
 
 ## Bloques principales
 

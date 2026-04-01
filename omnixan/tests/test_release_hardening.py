@@ -31,6 +31,9 @@ def test_release_artifacts_exist() -> None:
     internal_release = (
         REPO_ROOT / "omnixan" / "docs" / "INTERNAL_RELEASE_2026-04-01.md"
     )
+    daily_tasks = REPO_ROOT / "omnixan" / "docs" / "DAILY_TASKS.md"
+    vision = REPO_ROOT / "omnixan" / "docs" / "VISION.md"
+    amarr_principles = REPO_ROOT / "omnixan" / "docs" / "AMARR_PRINCIPLES.md"
 
     assert changelog.exists()
     assert "0.2.0 - 2026-04-01" in changelog.read_text(encoding="utf-8")
@@ -40,6 +43,18 @@ def test_release_artifacts_exist() -> None:
     )
     assert internal_release.exists()
     assert "Estado recomendado: `go`" in internal_release.read_text(encoding="utf-8")
+    assert daily_tasks.exists()
+    assert "## Fase 2 activa: propósito, dominio y experiencia" in daily_tasks.read_text(
+        encoding="utf-8"
+    )
+    assert vision.exists()
+    assert "OMNIXAN es una plataforma de orquestación cuántica" in vision.read_text(
+        encoding="utf-8"
+    )
+    assert amarr_principles.exists()
+    assert "## Glosario operativo inicial" in amarr_principles.read_text(
+        encoding="utf-8"
+    )
 
 
 def test_hardened_modules_do_not_configure_global_logging_on_import() -> None:

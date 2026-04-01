@@ -84,12 +84,15 @@ python -m omnixan redundant-deployment --smoke --json
 
 - [`CHANGELOG.md`](./CHANGELOG.md)
 - [`omnixan/docs/ARCHITECTURE.md`](./omnixan/docs/ARCHITECTURE.md)
+- [`omnixan/docs/AMARR_PRINCIPLES.md`](./omnixan/docs/AMARR_PRINCIPLES.md)
 - [`omnixan/docs/CLI.md`](./omnixan/docs/CLI.md)
+- [`omnixan/docs/DAILY_TASKS.md`](./omnixan/docs/DAILY_TASKS.md)
 - [`omnixan/docs/DEVELOPMENT.md`](./omnixan/docs/DEVELOPMENT.md)
 - [`omnixan/docs/INTERNAL_RELEASE_2026-04-01.md`](./omnixan/docs/INTERNAL_RELEASE_2026-04-01.md)
 - [`omnixan/docs/PACKAGING.md`](./omnixan/docs/PACKAGING.md)
 - [`omnixan/docs/REPO_STATUS.md`](./omnixan/docs/REPO_STATUS.md)
 - [`omnixan/docs/SUPPORT_STATUS.md`](./omnixan/docs/SUPPORT_STATUS.md)
+- [`omnixan/docs/VISION.md`](./omnixan/docs/VISION.md)
 
 ## Ejemplo minimo
 
